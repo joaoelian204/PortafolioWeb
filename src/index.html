@@ -2,12 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Portafolio</title>
+  <title>Portfolio - Visual Studio Code</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Developer Portfolio with VS Code aesthetics - Built with Angular and Supabase">
+  <meta name="theme-color" content="#1e1e1e">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  
+  <!-- Preload fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <script>
+    // Aplicar tema inmediatamente antes de que Angular se cargue
+    (function() {
+      const saved = localStorage.getItem('portfolio-theme');
+      const theme = saved === 'light' ? 'light' : 
+                   (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.add(theme + '-theme');
+    })();
+  </script>
+  <style>
+    /* Critical CSS for initial load */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--vscode-editor-background, #1e1e1e);
+      color: var(--vscode-editor-foreground, #d4d4d4);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+    
+    /* Loading screen */
+    .app-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--vscode-editor-background, #1e1e1e);
+      z-index: 9999;
+    }
+    
+    .app-loading .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .app-loading .text {
+      font-size: 14px;
+      color: #858585;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <div class="app-loading">
+      <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M95.0167 24.3833L75.7667 7.05C74.6667 6.08333 73.2167 5.58333 71.7333 5.66667C70.25 5.75 68.8667 6.41667 67.8833 7.53333L27.6667 52.7333L11.3833 39.9333C10.1 38.9 8.43333 38.4833 6.81667 38.7833C5.2 39.0833 3.78333 40.0667 2.93333 41.4833L0.616667 45.2C-0.0166667 46.2833 -0.183333 47.5833 0.15 48.8C0.483333 50.0167 1.28333 51.05 2.38333 51.6833L16.0833 60L2.38333 68.3167C1.28333 68.95 0.483333 69.9833 0.15 71.2C-0.183333 72.4167 -0.0166667 73.7167 0.616667 74.8L2.93333 78.5167C3.78333 79.9333 5.2 80.9167 6.81667 81.2167C8.43333 81.5167 10.1 81.1 11.3833 80.0667L27.6667 67.2667L67.8833 112.467C68.8667 113.583 70.25 114.25 71.7333 114.333C73.2167 114.417 74.6667 113.917 75.7667 112.95L95.0167 95.6167C96.9333 93.9 98 91.4 98 88.7833V31.2167C98 28.6 96.9333 26.1 95.0167 24.3833ZM71.6667 84.0333L45.7167 60L71.6667 35.9667V84.0333Z" fill="#007ACC"/>
+      </svg>
+      <span class="text">Loading Portfolio...</span>
+    </div>
+  </app-root>
 </body>
 </html>

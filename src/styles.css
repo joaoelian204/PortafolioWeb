@@ -1,3 +1,371 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   VS CODE THEME - DARK+ (DEFAULT DARK)
+   Portfolio Global Styles
+   ============================================ */
 
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/* CSS Variables - VS Code Dark+ Theme */
+:root {
+  /* Editor Colors */
+  --vscode-editor-background: #1e1e1e;
+  --vscode-editor-foreground: #d4d4d4;
+  --vscode-editor-lineHighlightBackground: #2a2d2e;
+  --vscode-editor-selectionBackground: #264f78;
+
+  /* Activity Bar */
+  --vscode-activityBar-background: #333333;
+  --vscode-activityBar-foreground: #ffffff;
+  --vscode-activityBar-inactiveForeground: #858585;
+  --vscode-activityBar-border: #333333;
+  --vscode-activityBar-activeBorder: #ffffff;
+
+  /* Side Bar */
+  --vscode-sideBar-background: #252526;
+  --vscode-sideBar-foreground: #cccccc;
+  --vscode-sideBar-border: #1e1e1e;
+  --vscode-sideBarSectionHeader-background: #252526;
+  --vscode-sideBarSectionHeader-foreground: #bbbbbb;
+
+  /* Title Bar */
+  --vscode-titleBar-activeBackground: #3c3c3c;
+  --vscode-titleBar-activeForeground: #cccccc;
+  --vscode-titleBar-inactiveBackground: #3c3c3c;
+  --vscode-titleBar-inactiveForeground: #999999;
+
+  /* Tabs */
+  --vscode-tab-activeBackground: #1e1e1e;
+  --vscode-tab-activeForeground: #ffffff;
+  --vscode-tab-inactiveBackground: #2d2d2d;
+  --vscode-tab-inactiveForeground: #969696;
+  --vscode-tab-border: #252526;
+  --vscode-tab-activeBorderTop: #007acc;
+  --vscode-tab-hoverBackground: #323232;
+  --vscode-editorGroupHeader-tabsBackground: #252526;
+  --vscode-editorGroupHeader-tabsBorder: #1e1e1e;
+
+  /* Status Bar */
+  --vscode-statusBar-background: #007acc;
+  --vscode-statusBar-foreground: #ffffff;
+  --vscode-statusBar-border: #007acc;
+
+  /* Input */
+  --vscode-input-background: #3c3c3c;
+  --vscode-input-foreground: #cccccc;
+  --vscode-input-border: #3c3c3c;
+  --vscode-input-placeholderForeground: #6b6b6b;
+
+  /* Button */
+  --vscode-button-background: #0e639c;
+  --vscode-button-foreground: #ffffff;
+  --vscode-button-hoverBackground: #1177bb;
+  --vscode-button-secondaryBackground: #3a3d41;
+  --vscode-button-secondaryForeground: #ffffff;
+  --vscode-button-secondaryHoverBackground: #45494e;
+  --vscode-button-border: #454545;
+
+  /* List */
+  --vscode-list-activeSelectionBackground: #094771;
+  --vscode-list-activeSelectionForeground: #ffffff;
+  --vscode-list-hoverBackground: #2a2d2e;
+  --vscode-list-focusBackground: #062f4a;
+
+  /* Panel */
+  --vscode-panel-background: #1e1e1e;
+  --vscode-panel-border: #3c3c3c;
+
+  /* Scrollbar */
+  --vscode-scrollbarSlider-background: rgba(121, 121, 121, 0.4);
+  --vscode-scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
+  --vscode-scrollbarSlider-activeBackground: rgba(191, 191, 191, 0.4);
+
+  /* Other */
+  --vscode-focusBorder: #007fd4;
+  --vscode-descriptionForeground: #858585;
+  --vscode-icon-foreground: #c5c5c5;
+  --vscode-textLink-foreground: #3794ff;
+  --vscode-textLink-activeForeground: #3794ff;
+  --vscode-toolbar-hoverBackground: rgba(90, 93, 94, 0.31);
+  --vscode-badge-background: #4d4d4d;
+  --vscode-badge-foreground: #ffffff;
+  --vscode-progressBar-background: #0e70c0;
+
+  /* Editor Line Numbers */
+  --vscode-editorLineNumber-foreground: #858585;
+  --vscode-editorLineNumber-activeForeground: #c6c6c6;
+  --vscode-editorIndentGuide-background: #404040;
+  --vscode-editorIndentGuide-activeBackground: #707070;
+}
+
+/* ============================================
+   VS CODE THEME - LIGHT+ (LIGHT MODE)
+   ============================================ */
+:root[data-theme="light"],
+:root.light-theme {
+  /* Editor Colors */
+  --vscode-editor-background: #ffffff;
+  --vscode-editor-foreground: #000000;
+  --vscode-editor-lineHighlightBackground: #f0f0f0;
+  --vscode-editor-selectionBackground: #add6ff;
+
+  /* Activity Bar */
+  --vscode-activityBar-background: #2c2c2c;
+  --vscode-activityBar-foreground: #ffffff;
+  --vscode-activityBar-inactiveForeground: #858585;
+  --vscode-activityBar-border: #2c2c2c;
+  --vscode-activityBar-activeBorder: #ffffff;
+
+  /* Side Bar */
+  --vscode-sideBar-background: #f3f3f3;
+  --vscode-sideBar-foreground: #616161;
+  --vscode-sideBar-border: #e8e8e8;
+  --vscode-sideBarSectionHeader-background: #f3f3f3;
+  --vscode-sideBarSectionHeader-foreground: #616161;
+
+  /* Title Bar */
+  --vscode-titleBar-activeBackground: #dddddd;
+  --vscode-titleBar-activeForeground: #333333;
+  --vscode-titleBar-inactiveBackground: #dddddd;
+  --vscode-titleBar-inactiveForeground: #666666;
+
+  /* Tabs */
+  --vscode-tab-activeBackground: #ffffff;
+  --vscode-tab-activeForeground: #333333;
+  --vscode-tab-inactiveBackground: #ececec;
+  --vscode-tab-inactiveForeground: #6e6e6e;
+  --vscode-tab-border: #e8e8e8;
+  --vscode-tab-activeBorderTop: #007acc;
+  --vscode-tab-hoverBackground: #f5f5f5;
+  --vscode-editorGroupHeader-tabsBackground: #ececec;
+  --vscode-editorGroupHeader-tabsBorder: #e8e8e8;
+
+  /* Status Bar */
+  --vscode-statusBar-background: #007acc;
+  --vscode-statusBar-foreground: #ffffff;
+  --vscode-statusBar-border: #007acc;
+
+  /* Input */
+  --vscode-input-background: #ffffff;
+  --vscode-input-foreground: #616161;
+  --vscode-input-border: #cecece;
+  --vscode-input-placeholderForeground: #8e8e8e;
+
+  /* Button */
+  --vscode-button-background: #007acc;
+  --vscode-button-foreground: #ffffff;
+  --vscode-button-hoverBackground: #005a9e;
+  --vscode-button-secondaryBackground: #5f6a79;
+  --vscode-button-secondaryForeground: #ffffff;
+  --vscode-button-secondaryHoverBackground: #4a5563;
+  --vscode-button-border: #454545;
+
+  /* List */
+  --vscode-list-activeSelectionBackground: #0064b1;
+  --vscode-list-activeSelectionForeground: #ffffff;
+  --vscode-list-hoverBackground: #e8e8e8;
+  --vscode-list-focusBackground: #bdd5f0;
+
+  /* Panel */
+  --vscode-panel-background: #ffffff;
+  --vscode-panel-border: #e8e8e8;
+
+  /* Scrollbar */
+  --vscode-scrollbarSlider-background: rgba(100, 100, 100, 0.4);
+  --vscode-scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
+  --vscode-scrollbarSlider-activeBackground: rgba(0, 0, 0, 0.6);
+
+  /* Other */
+  --vscode-focusBorder: #007fd4;
+  --vscode-descriptionForeground: #717171;
+  --vscode-icon-foreground: #424242;
+  --vscode-textLink-foreground: #006ab1;
+  --vscode-textLink-activeForeground: #006ab1;
+  --vscode-toolbar-hoverBackground: rgba(0, 0, 0, 0.08);
+  --vscode-badge-background: #c4c4c4;
+  --vscode-badge-foreground: #333333;
+  --vscode-progressBar-background: #007acc;
+
+  /* Editor Line Numbers */
+  --vscode-editorLineNumber-foreground: #237893;
+  --vscode-editorLineNumber-activeForeground: #0b216f;
+  --vscode-editorIndentGuide-background: #d3d3d3;
+  --vscode-editorIndentGuide-activeBackground: #939393;
+}
+
+/* Reset & Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+/* Code Font */
+code,
+pre,
+.code-editor,
+.code-content {
+  font-family: 'Consolas', 'Monaco', 'Courier New', 'Fira Code', monospace;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--vscode-scrollbarSlider-background);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--vscode-scrollbarSlider-hoverBackground);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--vscode-scrollbarSlider-activeBackground);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--vscode-editor-selectionBackground);
+  color: inherit;
+}
+
+/* Links */
+a {
+  color: var(--vscode-textLink-foreground);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Focus Styles */
+:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+}
+
+/* Utility Classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Syntax Highlighting Colors (VS Code Dark+) */
+.syntax-comment { color: #6a9955; }
+.syntax-keyword { color: #569cd6; }
+.syntax-string { color: #ce9178; }
+.syntax-number { color: #b5cea8; }
+.syntax-function { color: #dcdcaa; }
+.syntax-variable { color: #9cdcfe; }
+.syntax-type { color: #4ec9b0; }
+.syntax-constant { color: #4fc1ff; }
+.syntax-operator { color: #d4d4d4; }
+.syntax-punctuation { color: #d4d4d4; }
+.syntax-property { color: #9cdcfe; }
+.syntax-tag { color: #569cd6; }
+.syntax-attribute { color: #9cdcfe; }
+.syntax-class { color: #4ec9b0; }
+.syntax-interface { color: #4ec9b0; }
+.syntax-enum { color: #4ec9b0; }
+.syntax-namespace { color: #4ec9b0; }
+.syntax-decorator { color: #dcdcaa; }
+.syntax-regex { color: #d16969; }
+.syntax-escape { color: #d7ba7d; }
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .activity-bar,
+  .sidebar,
+  .tabs-bar,
+  .status-bar {
+    display: none !important;
+  }
+
+  .editor-content {
+    padding: 20px;
+  }
+}
