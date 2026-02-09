@@ -255,6 +255,125 @@ type AdminTab = 'profile' | 'skills' | 'projects';
                   />
                 </div>
 
+                <!-- CV Upload Section -->
+                <h3 class="subsection-title">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    style="width: 20px; height: 20px; margin-right: 8px;"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                  </svg>
+                  {{ i18n.language() === 'es' ? 'Currículum Vitae (CV)' : 'Resume / CV' }}
+                </h3>
+
+                <div class="cv-upload-section">
+                  @if (currentCvUrl()) {
+                    <div class="current-cv">
+                      <div class="cv-info">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          class="cv-icon"
+                        >
+                          <path
+                            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                          ></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <span class="cv-filename">CV.pdf</span>
+                      </div>
+                      <div class="cv-actions">
+                        <a [href]="currentCvUrl()" target="_blank" class="btn btn-sm btn-secondary">
+                          <svg
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            style="width: 14px; height: 14px;"
+                          >
+                            <path
+                              d="M6.823 7.823a.25.25 0 0 1 0-.354l2.5-2.5a.25.25 0 0 1 .354.354L7.53 7.47l2.147 2.146a.25.25 0 0 1-.354.354l-2.5-2.5z"
+                            />
+                            <path
+                              d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h4.768l.417-1.667A.5.5 0 0 1 6.67 1h2.66a.5.5 0 0 1 .485.333L10.232 3H14.5zM4.5 6.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm3 2a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"
+                            />
+                          </svg>
+                          {{ i18n.language() === 'es' ? 'Ver' : 'View' }}
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger" (click)="deleteCv()">
+                          <svg
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            style="width: 14px; height: 14px;"
+                          >
+                            <path
+                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                            />
+                            <path
+                              fill-rule="evenodd"
+                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                            />
+                          </svg>
+                          {{ i18n.language() === 'es' ? 'Eliminar' : 'Delete' }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+
+                  <div class="cv-upload-area" [class.has-file]="currentCvUrl()">
+                    <input
+                      type="file"
+                      id="cv-upload"
+                      accept=".pdf"
+                      (change)="onCvFileSelected($event)"
+                      class="file-input"
+                      #cvFileInput
+                    />
+                    <label for="cv-upload" class="upload-label">
+                      @if (isUploadingCv()) {
+                        <div class="upload-spinner"></div>
+                        <span>{{ i18n.language() === 'es' ? 'Subiendo...' : 'Uploading...' }}</span>
+                      } @else {
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          class="upload-icon"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>
+                          {{
+                            currentCvUrl()
+                              ? i18n.language() === 'es'
+                                ? 'Cambiar CV (PDF)'
+                                : 'Change CV (PDF)'
+                              : i18n.language() === 'es'
+                                ? 'Subir CV (PDF)'
+                                : 'Upload CV (PDF)'
+                          }}
+                        </span>
+                      }
+                    </label>
+                  </div>
+                  <p class="cv-hint">
+                    {{
+                      i18n.language() === 'es'
+                        ? 'Solo archivos PDF. El archivo se sobrescribirá si subes uno nuevo.'
+                        : 'PDF files only. The file will be overwritten if you upload a new one.'
+                    }}
+                  </p>
+                </div>
+
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
                     @if (isSaving()) {
@@ -674,115 +793,157 @@ type AdminTab = 'profile' | 'skills' | 'projects';
         height: 100vh;
         display: flex;
         flex-direction: column;
-        background-color: var(--vscode-editor-background, #1e1e1e);
-        color: var(--vscode-editor-foreground, #d4d4d4);
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        color: #e4e4e7;
         overflow: hidden;
+        font-family:
+          'Segoe UI',
+          system-ui,
+          -apple-system,
+          sans-serif;
       }
 
       .admin-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 16px 24px;
-        background-color: var(--vscode-titleBar-activeBackground, #3c3c3c);
-        border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+        padding: 20px 32px;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.1) 0%,
+          rgba(139, 92, 246, 0.05) 100%
+        );
+        border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        backdrop-filter: blur(10px);
         flex-shrink: 0;
       }
 
       .header-left {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
       }
 
       .header-title {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 18px;
-        font-weight: 600;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 700;
         margin: 0;
+        background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .admin-icon {
-        width: 20px;
-        height: 20px;
-        color: var(--vscode-textLink-foreground, #3794ff);
+        width: 28px;
+        height: 28px;
+        color: #818cf8;
+        filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.5));
       }
 
       .header-right {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 20px;
       }
 
       .user-email {
         font-size: 13px;
-        color: var(--vscode-descriptionForeground, #858585);
+        color: #a1a1aa;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .logout-btn {
         display: flex;
         align-items: center;
-        gap: 6px;
-        background: transparent;
-        border: 1px solid var(--vscode-button-border, #454545);
-        color: var(--vscode-editor-foreground, #d4d4d4);
-        padding: 6px 12px;
+        gap: 8px;
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0.1) 0%,
+          rgba(239, 68, 68, 0.05) 100%
+        );
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        padding: 8px 16px;
         font-size: 13px;
+        font-weight: 500;
         cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.15s ease;
+        border-radius: 8px;
+        transition: all 0.2s ease;
       }
 
       .logout-btn:hover {
-        background-color: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+        border-color: rgba(239, 68, 68, 0.5);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
       }
 
       .logout-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
       }
 
       .admin-tabs {
         display: flex;
-        background-color: var(--vscode-editorGroupHeader-tabsBackground, #252526);
-        border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+        gap: 8px;
+        padding: 16px 32px;
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         flex-shrink: 0;
       }
 
       .tab {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 12px 20px;
+        gap: 10px;
+        padding: 12px 24px;
         background: transparent;
-        border: none;
-        color: var(--vscode-tab-inactiveForeground, #969696);
-        font-size: 13px;
+        border: 1px solid transparent;
+        color: #a1a1aa;
+        font-size: 14px;
+        font-weight: 500;
         cursor: pointer;
-        border-bottom: 2px solid transparent;
-        transition: all 0.15s ease;
+        border-radius: 12px;
+        transition: all 0.25s ease;
       }
 
       .tab:hover {
-        color: var(--vscode-tab-activeForeground, #ffffff);
-        background-color: var(--vscode-tab-hoverBackground, #323232);
+        color: #e4e4e7;
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
       }
 
       .tab.active {
-        color: var(--vscode-tab-activeForeground, #ffffff);
-        border-bottom-color: var(--vscode-tab-activeBorderTop, #007acc);
+        color: #fff;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.2) 0%,
+          rgba(139, 92, 246, 0.1) 100%
+        );
+        border-color: rgba(99, 102, 241, 0.4);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+      }
+
+      .tab.active svg {
+        color: #818cf8;
       }
 
       .tab svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
+        transition: color 0.25s ease;
       }
 
       .admin-content {
         flex: 1;
-        padding: 24px;
+        padding: 32px;
         max-width: 1200px;
         margin: 0 auto;
         width: 100%;
@@ -791,7 +952,7 @@ type AdminTab = 'profile' | 'skills' | 'projects';
       }
 
       .admin-content::-webkit-scrollbar {
-        width: 10px;
+        width: 8px;
       }
 
       .admin-content::-webkit-scrollbar-track {
@@ -799,42 +960,71 @@ type AdminTab = 'profile' | 'skills' | 'projects';
       }
 
       .admin-content::-webkit-scrollbar-thumb {
-        background-color: var(--vscode-scrollbarSlider-background, rgba(121, 121, 121, 0.4));
-        border-radius: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(99, 102, 241, 0.3) 0%,
+          rgba(139, 92, 246, 0.3) 100%
+        );
+        border-radius: 4px;
       }
 
       .admin-content::-webkit-scrollbar-thumb:hover {
-        background-color: var(--vscode-scrollbarSlider-hoverBackground, rgba(100, 100, 100, 0.7));
+        background: linear-gradient(
+          180deg,
+          rgba(99, 102, 241, 0.5) 0%,
+          rgba(139, 92, 246, 0.5) 100%
+        );
       }
 
       /* Alert Messages */
       .alert {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
-        border-radius: 4px;
-        margin-bottom: 20px;
+        gap: 14px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
         font-size: 14px;
         position: relative;
+        backdrop-filter: blur(10px);
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .alert svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         flex-shrink: 0;
       }
 
       .alert-error {
-        background-color: rgba(244, 135, 113, 0.15);
-        border: 1px solid #f48771;
-        color: #f48771;
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0.15) 0%,
+          rgba(239, 68, 68, 0.05) 100%
+        );
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
       }
 
       .alert-success {
-        background-color: rgba(78, 201, 176, 0.15);
-        border: 1px solid #4ec9b0;
-        color: #4ec9b0;
+        background: linear-gradient(
+          135deg,
+          rgba(34, 197, 94, 0.15) 0%,
+          rgba(34, 197, 94, 0.05) 100%
+        );
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #86efac;
       }
 
       .alert-close {
@@ -842,40 +1032,45 @@ type AdminTab = 'profile' | 'skills' | 'projects';
         background: transparent;
         border: none;
         color: inherit;
-        font-size: 20px;
+        font-size: 22px;
         cursor: pointer;
         padding: 0;
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 3px;
-        transition: background-color 0.15s ease;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        opacity: 0.7;
       }
 
       .alert-close:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.1);
       }
 
       .section {
-        background-color: var(--vscode-sideBar-background, #252526);
-        border: 1px solid var(--vscode-panel-border, #3c3c3c);
-        border-radius: 8px;
-        padding: 24px;
+        background: linear-gradient(135deg, rgba(30, 30, 50, 0.8) 0%, rgba(20, 20, 40, 0.9) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 28px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
       }
 
       .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
       }
 
       .section-title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 600;
-        margin: 0 0 20px;
+        margin: 0 0 24px;
+        color: #f4f4f5;
       }
 
       .section-header .section-title {
@@ -883,92 +1078,125 @@ type AdminTab = 'profile' | 'skills' | 'projects';
       }
 
       .subsection-title {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
-        color: var(--vscode-descriptionForeground, #858585);
-        margin: 24px 0 12px;
+        color: #818cf8;
+        margin: 28px 0 16px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .subsection-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.3) 0%, transparent 100%);
       }
 
       .form {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 20px;
       }
 
       .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        gap: 20px;
       }
 
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
       }
 
       .label {
         font-size: 13px;
-        color: var(--vscode-editor-foreground, #d4d4d4);
+        color: #a1a1aa;
         font-weight: 500;
+        letter-spacing: 0.3px;
       }
 
       .input {
-        background-color: var(--vscode-input-background, #3c3c3c);
-        border: 1px solid var(--vscode-input-border, #3c3c3c);
-        color: var(--vscode-input-foreground, #cccccc);
-        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f4f4f5;
+        padding: 12px 16px;
         font-size: 14px;
-        border-radius: 4px;
+        border-radius: 10px;
         outline: none;
-        transition: border-color 0.15s ease;
+        transition: all 0.2s ease;
       }
 
       .input:focus {
-        border-color: var(--vscode-focusBorder, #007fd4);
+        border-color: rgba(99, 102, 241, 0.5);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .input::placeholder {
+        color: #52525b;
       }
 
       .input[type='file'] {
-        padding: 6px;
+        padding: 10px;
         cursor: pointer;
       }
 
       .input[type='file']::-webkit-file-upload-button {
-        background-color: var(--vscode-button-secondaryBackground, #3a3d41);
-        color: var(--vscode-button-secondaryForeground, #ffffff);
-        border: 1px solid var(--vscode-button-border, #454545);
-        border-radius: 2px;
-        padding: 4px 12px;
-        margin-right: 8px;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.2) 0%,
+          rgba(139, 92, 246, 0.1) 100%
+        );
+        color: #c4b5fd;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 6px;
+        padding: 6px 14px;
+        margin-right: 12px;
         cursor: pointer;
         font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s ease;
       }
 
       .input[type='file']::-webkit-file-upload-button:hover {
-        background-color: var(--vscode-button-secondaryHoverBackground, #45494e);
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.3) 0%,
+          rgba(139, 92, 246, 0.2) 100%
+        );
       }
 
       .textarea {
         resize: vertical;
-        min-height: 80px;
+        min-height: 100px;
+        line-height: 1.6;
       }
 
       select.input {
         cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a1a1aa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
       }
 
       .input-disabled {
-        opacity: 0.5;
+        opacity: 0.4;
         cursor: not-allowed;
-        background-color: var(--vscode-input-background, #2d2d2d);
+        background: rgba(0, 0, 0, 0.2);
       }
 
       .form-hint {
         font-size: 12px;
-        color: var(--vscode-descriptionForeground, #858585);
-        margin-top: 4px;
+        color: #71717a;
+        margin-top: 6px;
         line-height: 1.4;
       }
 
@@ -979,39 +1207,48 @@ type AdminTab = 'profile' | 'skills' | 'projects';
       .checkbox-label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         cursor: pointer;
-        font-size: 13px;
+        font-size: 14px;
+        color: #d4d4d8;
+        padding: 8px 0;
       }
 
       .checkbox-label input[type='checkbox'] {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         cursor: pointer;
+        accent-color: #818cf8;
       }
 
       .label-small {
         font-size: 12px;
-        color: var(--vscode-descriptionForeground, #858585);
-        margin-bottom: 8px;
+        color: #71717a;
+        margin-bottom: 10px;
         display: block;
       }
 
       .image-preview-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 12px;
-        margin-top: 12px;
+        gap: 14px;
+        margin-top: 14px;
       }
 
       .image-preview-item {
         position: relative;
         width: 100%;
         aspect-ratio: 1;
-        border: 1px solid var(--vscode-panel-border, #3c3c3c);
-        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
         overflow: hidden;
-        background-color: var(--vscode-editor-background, #1e1e1e);
+        background: rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+      }
+
+      .image-preview-item:hover {
+        border-color: rgba(99, 102, 241, 0.4);
+        transform: scale(1.02);
       }
 
       .image-preview-item img {
@@ -1022,23 +1259,29 @@ type AdminTab = 'profile' | 'skills' | 'projects';
 
       .remove-image-btn {
         position: absolute;
-        top: 4px;
-        right: 4px;
-        background-color: rgba(255, 0, 0, 0.8);
+        top: 6px;
+        right: 6px;
+        background: rgba(239, 68, 68, 0.9);
         border: none;
         border-radius: 50%;
-        width: 24px;
-        height: 24px;
+        width: 26px;
+        height: 26px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         color: white;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
+        opacity: 0;
+      }
+
+      .image-preview-item:hover .remove-image-btn {
+        opacity: 1;
       }
 
       .remove-image-btn:hover {
-        background-color: rgba(255, 0, 0, 1);
+        background: rgba(239, 68, 68, 1);
+        transform: scale(1.1);
       }
 
       .remove-image-btn svg {
@@ -1047,76 +1290,214 @@ type AdminTab = 'profile' | 'skills' | 'projects';
       }
 
       .existing-images {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      /* CV Upload Section */
+      .cv-upload-section {
         margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid var(--vscode-panel-border, #3c3c3c);
+      }
+
+      .current-cv {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 16px;
+      }
+
+      .cv-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .cv-icon {
+        width: 32px;
+        height: 32px;
+        color: #818cf8;
+      }
+
+      .cv-filename {
+        font-size: 14px;
+        font-weight: 500;
+        color: #f4f4f5;
+      }
+
+      .cv-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-sm {
+        padding: 8px 14px;
+        font-size: 12px;
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.25);
+      }
+
+      .cv-upload-area {
+        position: relative;
+      }
+
+      .cv-upload-area .file-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .cv-upload-area .upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 32px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 2px dashed rgba(99, 102, 241, 0.4);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #a1a1aa;
+      }
+
+      .cv-upload-area .upload-label:hover {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: rgba(99, 102, 241, 0.6);
+        color: #c4b5fd;
+      }
+
+      .cv-upload-area.has-file .upload-label {
+        padding: 20px;
+        flex-direction: row;
+      }
+
+      .cv-upload-area .upload-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .cv-upload-area.has-file .upload-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .cv-upload-area .upload-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(99, 102, 241, 0.3);
+        border-top-color: #818cf8;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .cv-hint {
+        font-size: 12px;
+        color: #71717a;
+        margin-top: 10px;
+        text-align: center;
       }
 
       .form-actions {
-        margin-top: 16px;
+        margin-top: 24px;
         display: flex;
-        gap: 12px;
+        gap: 14px;
       }
 
       .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
-        padding: 8px 16px;
-        font-size: 13px;
-        font-weight: 500;
+        gap: 8px;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
         border: none;
-        border-radius: 4px;
+        border-radius: 10px;
         cursor: pointer;
-        transition: all 0.15s ease;
+        transition: all 0.2s ease;
+        letter-spacing: 0.3px;
       }
 
       .btn svg {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
       }
 
       .btn-primary {
-        background-color: var(--vscode-button-background, #0e639c);
-        color: var(--vscode-button-foreground, #ffffff);
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
       }
 
       .btn-primary:hover:not(:disabled) {
-        background-color: var(--vscode-button-hoverBackground, #1177bb);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
       }
 
       .btn-secondary {
-        background-color: var(--vscode-button-secondaryBackground, #3a3d41);
-        color: var(--vscode-button-secondaryForeground, #ffffff);
+        background: rgba(255, 255, 255, 0.05);
+        color: #d4d4d8;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .btn-secondary:hover:not(:disabled) {
-        background-color: var(--vscode-button-secondaryHoverBackground, #45494e);
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
       }
 
       .btn-danger {
-        background-color: #c42b1c;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         color: white;
+        box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
       }
 
       .btn-danger:hover:not(:disabled) {
-        background-color: #d63a2c;
+        background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
       }
 
       .btn-sm {
-        padding: 6px 12px;
+        padding: 8px 14px;
         font-size: 12px;
+        border-radius: 8px;
       }
 
       .btn:disabled {
-        opacity: 0.6;
+        opacity: 0.5;
         cursor: not-allowed;
+        transform: none !important;
       }
 
       /* Table */
       .table-container {
         overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       .table {
@@ -1126,70 +1507,120 @@ type AdminTab = 'profile' | 'skills' | 'projects';
 
       .table th,
       .table td {
-        padding: 12px;
+        padding: 16px;
         text-align: left;
-        border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
 
       .table th {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
-        color: var(--vscode-descriptionForeground, #858585);
+        color: #71717a;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .table tbody tr {
+        transition: background 0.2s ease;
+      }
+
+      .table tbody tr:hover {
+        background: rgba(99, 102, 241, 0.05);
+      }
+
+      .table tbody tr:last-child td {
+        border-bottom: none;
       }
 
       .skill-label {
-        font-weight: 500;
+        font-weight: 600;
+        color: #f4f4f5;
       }
 
       .badge {
-        display: inline-block;
-        padding: 4px 8px;
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
         font-size: 11px;
-        font-weight: 500;
-        border-radius: 4px;
+        font-weight: 600;
+        border-radius: 20px;
         text-transform: capitalize;
+        letter-spacing: 0.3px;
       }
 
       .badge[data-category='languages'] {
-        background-color: rgba(49, 120, 198, 0.2);
-        color: #3178c6;
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0.2) 0%,
+          rgba(59, 130, 246, 0.1) 100%
+        );
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.3);
       }
 
       .badge[data-category='frameworks'] {
-        background-color: rgba(78, 201, 176, 0.2);
-        color: #4ec9b0;
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.2) 0%,
+          rgba(16, 185, 129, 0.1) 100%
+        );
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
       }
 
       .badge[data-category='databases'] {
-        background-color: rgba(206, 145, 120, 0.2);
-        color: #ce9178;
+        background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.2) 0%,
+          rgba(249, 115, 22, 0.1) 100%
+        );
+        color: #fb923c;
+        border: 1px solid rgba(249, 115, 22, 0.3);
       }
 
       .badge[data-category='tools'] {
-        background-color: rgba(220, 220, 170, 0.2);
-        color: #dcdcaa;
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.1) 100%);
+        color: #fbbf24;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+      }
+
+      .badge[data-category='other'] {
+        background: linear-gradient(
+          135deg,
+          rgba(168, 85, 247, 0.2) 0%,
+          rgba(168, 85, 247, 0.1) 100%
+        );
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.3);
       }
 
       .badge-success {
-        background-color: rgba(78, 201, 176, 0.2);
-        color: #4ec9b0;
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.3);
       }
 
       .badge-muted {
-        background-color: rgba(133, 133, 133, 0.2);
-        color: #858585;
+        background: rgba(113, 113, 122, 0.2);
+        color: #a1a1aa;
+        border: 1px solid rgba(113, 113, 122, 0.3);
       }
 
       .badge-primary {
-        background-color: rgba(55, 148, 255, 0.2);
-        color: #3794ff;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.2) 0%,
+          rgba(99, 102, 241, 0.1) 100%
+        );
+        color: #818cf8;
+        border: 1px solid rgba(99, 102, 241, 0.3);
       }
 
       .badge-warning {
-        background-color: rgba(204, 167, 0, 0.2);
-        color: #cca700;
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.1) 100%);
+        color: #fbbf24;
+        border: 1px solid rgba(234, 179, 8, 0.3);
       }
 
       .proficiency-bar {
@@ -1201,108 +1632,132 @@ type AdminTab = 'profile' | 'skills' | 'projects';
 
       .proficiency-fill {
         height: 6px;
-        background-color: var(--vscode-progressBar-background, #0e70c0);
+        background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
         border-radius: 3px;
         flex: 1;
       }
 
       .proficiency-text {
         font-size: 12px;
-        color: var(--vscode-descriptionForeground, #858585);
+        color: #71717a;
         min-width: 35px;
       }
 
       .actions {
         display: flex;
-        gap: 8px;
+        gap: 10px;
       }
 
       .action-btn {
-        width: 28px;
-        height: 28px;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: transparent;
-        border: 1px solid var(--vscode-panel-border, #3c3c3c);
-        color: var(--vscode-editor-foreground, #d4d4d4);
-        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #a1a1aa;
+        border-radius: 8px;
         cursor: pointer;
-        transition: all 0.15s ease;
+        transition: all 0.2s ease;
       }
 
       .action-btn:hover {
-        background-color: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
+        background: rgba(99, 102, 241, 0.15);
+        border-color: rgba(99, 102, 241, 0.3);
+        color: #818cf8;
+        transform: translateY(-2px);
       }
 
       .action-btn-danger:hover {
-        background-color: rgba(196, 43, 28, 0.3);
-        border-color: #c42b1c;
-        color: #f48771;
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #f87171;
       }
 
       .action-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
       }
 
       /* Projects Grid */
       .projects-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
       }
 
       .project-card {
-        background-color: var(--vscode-editor-background, #1e1e1e);
-        border: 1px solid var(--vscode-panel-border, #3c3c3c);
-        border-radius: 8px;
-        padding: 16px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s ease;
+      }
+
+      .project-card:hover {
+        border-color: rgba(99, 102, 241, 0.3);
+        transform: translateY(-4px);
+        box-shadow:
+          0 12px 40px rgba(0, 0, 0, 0.3),
+          0 0 30px rgba(99, 102, 241, 0.1);
       }
 
       .project-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
       }
 
       .project-title {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
         margin: 0;
+        color: #f4f4f5;
       }
 
       .project-badges {
         display: flex;
-        gap: 6px;
+        gap: 8px;
+        flex-wrap: wrap;
       }
 
       .project-description {
-        font-size: 13px;
-        color: var(--vscode-descriptionForeground, #858585);
-        margin: 0 0 12px;
-        line-height: 1.5;
+        font-size: 14px;
+        color: #a1a1aa;
+        margin: 0 0 16px;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       .project-tech {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 16px;
+        gap: 8px;
+        margin-bottom: 20px;
       }
 
       .tech-tag {
-        padding: 2px 8px;
+        padding: 4px 10px;
         font-size: 11px;
-        background-color: var(--vscode-badge-background, #4d4d4d);
-        color: var(--vscode-badge-foreground, #ffffff);
-        border-radius: 3px;
+        font-weight: 500;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.15) 0%,
+          rgba(139, 92, 246, 0.1) 100%
+        );
+        color: #c4b5fd;
+        border-radius: 6px;
+        border: 1px solid rgba(99, 102, 241, 0.2);
       }
 
       .project-actions {
         display: flex;
-        gap: 8px;
+        gap: 10px;
       }
 
       /* Modal */
@@ -1312,72 +1767,118 @@ type AdminTab = 'profile' | 'skills' | 'projects';
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 1000;
         padding: 20px;
+        animation: fadeIn 0.2s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       .modal {
         width: 100%;
-        max-width: 500px;
-        background-color: var(--vscode-sideBar-background, #252526);
-        border: 1px solid var(--vscode-panel-border, #3c3c3c);
-        border-radius: 8px;
+        max-width: 540px;
+        background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
         max-height: 90vh;
         overflow-y: auto;
+        box-shadow:
+          0 24px 80px rgba(0, 0, 0, 0.5),
+          0 0 40px rgba(99, 102, 241, 0.1);
+        animation: modalSlideIn 0.3s ease;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .modal::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .modal::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .modal::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.3);
+        border-radius: 3px;
       }
 
       .modal-lg {
-        max-width: 700px;
+        max-width: 720px;
       }
 
       .modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+        padding: 24px 28px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(0, 0, 0, 0.2);
       }
 
       .modal-header h3 {
         margin: 0;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
+        color: #f4f4f5;
       }
 
       .modal-close {
-        width: 28px;
-        height: 28px;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: transparent;
-        border: none;
-        color: var(--vscode-editor-foreground, #d4d4d4);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #a1a1aa;
         font-size: 24px;
         cursor: pointer;
-        border-radius: 4px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
       }
 
       .modal-close:hover {
-        background-color: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #f87171;
       }
 
       .modal-body {
-        padding: 20px;
+        padding: 28px;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 20px;
       }
 
       .modal-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 12px;
-        margin-top: 8px;
+        gap: 14px;
+        margin-top: 12px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       @media (max-width: 768px) {
@@ -1387,13 +1888,37 @@ type AdminTab = 'profile' | 'skills' | 'projects';
 
         .admin-header {
           flex-direction: column;
-          gap: 12px;
+          gap: 16px;
           align-items: flex-start;
+          padding: 16px 20px;
         }
 
         .header-right {
           width: 100%;
           justify-content: space-between;
+        }
+
+        .admin-tabs {
+          padding: 12px 16px;
+          overflow-x: auto;
+        }
+
+        .tab {
+          padding: 10px 16px;
+          font-size: 13px;
+          white-space: nowrap;
+        }
+
+        .admin-content {
+          padding: 20px 16px;
+        }
+
+        .section {
+          padding: 20px;
+        }
+
+        .projects-grid {
+          grid-template-columns: 1fr;
         }
       }
     `,
@@ -1408,6 +1933,8 @@ export class AdminComponent implements OnInit {
   // State
   activeTab = signal<AdminTab>('profile');
   isSaving = signal(false);
+  isUploadingCv = signal(false);
+  currentCvUrl = signal<string | null>(null);
   showSkillModal = signal(false);
   showProjectModal = signal(false);
   editingSkill = signal<Skill | null>(null);
@@ -1482,6 +2009,11 @@ export class AdminComponent implements OnInit {
     this.profile.set(profile);
     this.skills.set(skills);
     this.projects.set(projects);
+
+    // Cargar URL del CV actual
+    if (profile?.resume_url) {
+      this.currentCvUrl.set(profile.resume_url);
+    }
 
     if (profile) {
       this.profileForm.patchValue({
@@ -1945,6 +2477,125 @@ export class AdminComponent implements OnInit {
             : 'Unexpected error saving'),
       );
       this.isSaving.set(false);
+    }
+  }
+
+  // CV Upload Methods
+  async onCvFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    // Validar que sea PDF
+    if (file.type !== 'application/pdf') {
+      this.errorMessage.set(
+        this.i18n.language() === 'es'
+          ? 'Solo se permiten archivos PDF'
+          : 'Only PDF files are allowed',
+      );
+      return;
+    }
+
+    // Validar tamaño (máx 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      this.errorMessage.set(
+        this.i18n.language() === 'es'
+          ? 'El archivo es demasiado grande. Máximo 10MB.'
+          : 'File is too large. Maximum 10MB.',
+      );
+      return;
+    }
+
+    this.isUploadingCv.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      const result = await this.supabase.uploadCV(file);
+
+      if (result.error) {
+        this.errorMessage.set(
+          this.i18n.language() === 'es'
+            ? `Error al subir el CV: ${result.error.message}`
+            : `Error uploading CV: ${result.error.message}`,
+        );
+        return;
+      }
+
+      if (result.url) {
+        // Actualizar el perfil con la nueva URL del CV
+        const updateResult = await this.supabase.updateProfile({
+          resume_url: result.url,
+        });
+
+        if (updateResult.error) {
+          this.errorMessage.set(
+            this.i18n.language() === 'es'
+              ? 'CV subido pero no se pudo actualizar el perfil'
+              : 'CV uploaded but could not update profile',
+          );
+          return;
+        }
+
+        this.currentCvUrl.set(result.url);
+        this.successMessage.set(
+          this.i18n.language() === 'es' ? '¡CV subido exitosamente!' : 'CV uploaded successfully!',
+        );
+      }
+    } catch (error) {
+      this.errorMessage.set(
+        this.i18n.language() === 'es'
+          ? 'Error inesperado al subir el CV'
+          : 'Unexpected error uploading CV',
+      );
+    } finally {
+      this.isUploadingCv.set(false);
+      // Limpiar el input
+      input.value = '';
+    }
+  }
+
+  async deleteCv(): Promise<void> {
+    if (
+      !confirm(
+        this.i18n.language() === 'es'
+          ? '¿Estás seguro de que quieres eliminar tu CV?'
+          : 'Are you sure you want to delete your CV?',
+      )
+    )
+      return;
+
+    try {
+      // Eliminar del storage
+      const deleteResult = await this.supabase.deleteCV();
+      if (deleteResult.error) {
+        console.warn('Error deleting CV from storage:', deleteResult.error);
+      }
+
+      // Actualizar el perfil para quitar la URL
+      const updateResult = await this.supabase.updateProfile({
+        resume_url: null,
+      });
+
+      if (updateResult.error) {
+        this.errorMessage.set(
+          this.i18n.language() === 'es'
+            ? 'Error al actualizar el perfil'
+            : 'Error updating profile',
+        );
+        return;
+      }
+
+      this.currentCvUrl.set(null);
+      this.successMessage.set(
+        this.i18n.language() === 'es' ? 'CV eliminado exitosamente' : 'CV deleted successfully',
+      );
+    } catch (error) {
+      this.errorMessage.set(
+        this.i18n.language() === 'es'
+          ? 'Error inesperado al eliminar el CV'
+          : 'Unexpected error deleting CV',
+      );
     }
   }
 

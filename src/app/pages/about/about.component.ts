@@ -1,11 +1,13 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ProfileInfo } from '../../core/models/database.types';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
+import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-download-modal.component';
 
 @Component({
   selector: 'app-about',
   standalone: true,
+  imports: [CvDownloadModalComponent],
   template: `
     <div class="code-editor">
       <div class="line-numbers">
@@ -263,12 +265,44 @@ import { SupabaseService } from '../../core/services/supabase.service';
 
           <div class="divider">---</div>
 
+          <!-- CV Download Button -->
+          <div class="cv-download-section">
+            <h2 class="subheading">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
+              {{ i18n.language() === 'es' ? 'Currículum' : 'Resume' }}
+            </h2>
+            <button class="cv-download-btn" (click)="openCvModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              {{ i18n.language() === 'es' ? 'Descargar CV' : 'Download CV' }}
+            </button>
+          </div>
+
+          <div class="divider">---</div>
+
           <p class="comment">
             *{{ i18n.language() === 'es' ? 'Última actualización' : 'Last updated' }}: {{ today }}*
           </p>
         </div>
       </div>
     </div>
+
+    <!-- CV Download Modal -->
+    <app-cv-download-modal #cvModal [cvUrl]="profile()?.resume_url || ''" />
   `,
   styles: [
     `
@@ -382,10 +416,44 @@ import { SupabaseService } from '../../core/services/supabase.service';
         color: #808080;
         margin: 16px 0;
       }
+
+      /* CV Download Section */
+      .cv-download-section {
+        margin: 24px 0;
+      }
+
+      .cv-download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background-color: var(--vscode-button-background, #0e639c);
+        color: var(--vscode-button-foreground, #ffffff);
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 12px;
+      }
+
+      .cv-download-btn:hover {
+        background-color: var(--vscode-button-hoverBackground, #1177bb);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(14, 99, 156, 0.4);
+      }
+
+      .cv-download-btn svg {
+        width: 18px;
+        height: 18px;
+      }
     `,
   ],
 })
 export class AboutComponent implements OnInit {
+  @ViewChild('cvModal') cvModal!: CvDownloadModalComponent;
+
   private supabase = inject(SupabaseService);
   i18n = inject(I18nService);
 
@@ -397,6 +465,10 @@ export class AboutComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const profileData = await this.supabase.getProfile();
     this.profile.set(profileData);
-    this.lineNumbers.set(Array.from({ length: 40 }, (_, i) => i + 1));
+    this.lineNumbers.set(Array.from({ length: 45 }, (_, i) => i + 1));
+  }
+
+  openCvModal(): void {
+    this.cvModal.open();
   }
 }

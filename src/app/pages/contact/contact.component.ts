@@ -145,6 +145,21 @@ import { SupabaseService } from '../../core/services/supabase.service';
                   }}</span>
                 </div>
               }
+
+              @if (submitError()) {
+                <div class="error-message">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                  <span>{{
+                    i18n.language() === 'es'
+                      ? 'Error al enviar. Por favor intenta de nuevo.'
+                      : 'Error sending. Please try again.'
+                  }}</span>
+                </div>
+              }
             </form>
 
             <div class="section-footer">
@@ -464,6 +479,24 @@ import { SupabaseService } from '../../core/services/supabase.service';
         flex-shrink: 0;
       }
 
+      .error-message {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        background-color: rgba(244, 135, 113, 0.1);
+        border: 1px solid #f48771;
+        border-radius: 4px;
+        color: #f48771;
+        font-size: 13px;
+      }
+
+      .error-message svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
       /* Info Section */
       .info-section {
         display: flex;
@@ -606,19 +639,50 @@ export class ContactComponent implements OnInit {
     return parts[parts.length - 1] || parts[parts.length - 2] || url;
   }
 
+  submitError = signal(false);
+
   async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) return;
 
     this.isSubmitting.set(true);
+    this.submitSuccess.set(false);
+    this.submitError.set(false);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const formData = this.contactForm.value;
 
-    this.isSubmitting.set(false);
-    this.submitSuccess.set(true);
-    this.contactForm.reset();
+      // Enviar email a través de la función de Netlify
+      const response = await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject || 'Nuevo mensaje desde el portafolio',
+          message: formData.message,
+        }),
+      });
 
-    // Hide success message after 5 seconds
-    setTimeout(() => this.submitSuccess.set(false), 5000);
+      const result = await response.json();
+
+      if (result.success) {
+        this.submitSuccess.set(true);
+        this.contactForm.reset();
+        // Ocultar mensaje de éxito después de 5 segundos
+        setTimeout(() => this.submitSuccess.set(false), 5000);
+      } else {
+        console.error('Error sending email:', result.error);
+        this.submitError.set(true);
+        setTimeout(() => this.submitError.set(false), 5000);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      this.submitError.set(true);
+      setTimeout(() => this.submitError.set(false), 5000);
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 }

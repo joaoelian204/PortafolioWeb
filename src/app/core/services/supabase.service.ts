@@ -442,6 +442,50 @@ export class SupabaseService {
   // ============================================
 
   private readonly STORAGE_BUCKET = 'proyectos_fotos';
+  private readonly CV_BUCKET = 'cv';
+
+  async uploadCV(file: File): Promise<{ url: string | null; error: Error | null }> {
+    if (!this.supabase) {
+      return { url: null, error: new Error('Supabase no está configurado') };
+    }
+
+    // Siempre usar el mismo nombre para sobrescribir
+    const fileName = 'cv.pdf';
+
+    console.log('Uploading CV to:', this.CV_BUCKET, fileName);
+
+    const { data, error } = await this.supabase.storage
+      .from(this.CV_BUCKET)
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true, // Sobrescribir si existe
+      });
+
+    if (error) {
+      console.error('CV Upload error:', error);
+      return { url: null, error };
+    }
+
+    console.log('CV Upload success:', data);
+
+    const {
+      data: { publicUrl },
+    } = this.supabase.storage.from(this.CV_BUCKET).getPublicUrl(fileName);
+
+    // Agregar timestamp para evitar cache
+    const urlWithTimestamp = `${publicUrl}?t=${Date.now()}`;
+    console.log('CV Public URL:', urlWithTimestamp);
+
+    return { url: urlWithTimestamp, error: null };
+  }
+
+  async deleteCV(): Promise<{ error: Error | null }> {
+    if (!this.supabase) {
+      return { error: new Error('Supabase no está configurado') };
+    }
+    const { error } = await this.supabase.storage.from(this.CV_BUCKET).remove(['cv.pdf']);
+    return { error };
+  }
 
   async uploadImage(
     file: File,
