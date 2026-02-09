@@ -1,8 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { environment } from '../../../environments/environment';
 import { ProfileInfo } from '../../core/models/database.types';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
+
+declare const hcaptcha: any;
 
 @Component({
   selector: 'app-contact',
@@ -111,10 +114,28 @@ import { SupabaseService } from '../../core/services/supabase.service';
                 }
               </div>
 
+              <!-- hCaptcha -->
+              <div class="form-group captcha-container">
+                <label class="label">
+                  <span class="label-text">// captcha: required</span>
+                </label>
+                <div id="contact-hcaptcha" class="h-captcha"></div>
+                @if (captchaError()) {
+                  <span class="error"
+                    >// Error:
+                    {{
+                      i18n.language() === 'es'
+                        ? 'Por favor completa el captcha'
+                        : 'Please complete the captcha'
+                    }}</span
+                  >
+                }
+              </div>
+
               <button
                 type="submit"
                 class="submit-btn"
-                [disabled]="contactForm.invalid || isSubmitting()"
+                [disabled]="contactForm.invalid || isSubmitting() || !captchaToken()"
               >
                 @if (isSubmitting()) {
                   <span class="btn-content">
@@ -497,6 +518,19 @@ import { SupabaseService } from '../../core/services/supabase.service';
         flex-shrink: 0;
       }
 
+      /* Captcha */
+      .captcha-container {
+        margin-top: 8px;
+      }
+
+      .h-captcha {
+        margin-top: 8px;
+      }
+
+      .h-captcha iframe {
+        border-radius: 4px;
+      }
+
       /* Info Section */
       .info-section {
         display: flex;
@@ -607,7 +641,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
     `,
   ],
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
   private fb = inject(FormBuilder);
   private supabase = inject(SupabaseService);
   i18n = inject(I18nService);
@@ -616,6 +650,9 @@ export class ContactComponent implements OnInit {
   contactForm: FormGroup;
   isSubmitting = signal(false);
   submitSuccess = signal(false);
+  captchaToken = signal<string | null>(null);
+  captchaError = signal(false);
+  private captchaWidgetId: string | null = null;
 
   lineNumbers = Array.from({ length: 60 }, (_, i) => i + 1);
 
@@ -631,6 +668,77 @@ export class ContactComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const profileData = await this.supabase.getProfile();
     this.profile.set(profileData);
+    this.loadHCaptchaScript();
+  }
+
+  ngAfterViewInit(): void {
+    // El captcha se renderiza después de que el script se carga
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar el widget si existe
+    if (this.captchaWidgetId !== null && typeof hcaptcha !== 'undefined') {
+      try {
+        hcaptcha.reset(this.captchaWidgetId);
+      } catch (e) {
+        // Ignorar errores de limpieza
+      }
+    }
+  }
+
+  private loadHCaptchaScript(): void {
+    // Verificar si el script ya está cargado
+    if (document.getElementById('hcaptcha-script')) {
+      this.renderCaptcha();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = 'hcaptcha-script';
+    script.src = 'https://js.hcaptcha.com/1/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => this.renderCaptcha();
+    document.head.appendChild(script);
+  }
+
+  private renderCaptcha(): void {
+    // Esperar a que el elemento exista
+    setTimeout(() => {
+      const container = document.getElementById('contact-hcaptcha');
+      if (container && typeof hcaptcha !== 'undefined') {
+        try {
+          this.captchaWidgetId = hcaptcha.render('contact-hcaptcha', {
+            sitekey: environment.hcaptcha.siteKey,
+            theme: 'dark',
+            callback: (token: string) => {
+              this.captchaToken.set(token);
+              this.captchaError.set(false);
+            },
+            'expired-callback': () => {
+              this.captchaToken.set(null);
+            },
+            'error-callback': () => {
+              this.captchaToken.set(null);
+              this.captchaError.set(true);
+            },
+          });
+        } catch (e) {
+          console.error('Error rendering hCaptcha:', e);
+        }
+      }
+    }, 100);
+  }
+
+  private resetCaptcha(): void {
+    if (this.captchaWidgetId !== null && typeof hcaptcha !== 'undefined') {
+      try {
+        hcaptcha.reset(this.captchaWidgetId);
+        this.captchaToken.set(null);
+      } catch (e) {
+        console.error('Error resetting captcha:', e);
+      }
+    }
   }
 
   getUsername(url: string | undefined): string {
@@ -644,11 +752,34 @@ export class ContactComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) return;
 
+    // Verificar captcha
+    const token = this.captchaToken();
+    if (!token) {
+      this.captchaError.set(true);
+      return;
+    }
+
     this.isSubmitting.set(true);
     this.submitSuccess.set(false);
     this.submitError.set(false);
 
     try {
+      // Verificar captcha en el servidor
+      const captchaResponse = await fetch('/.netlify/functions/verify-captcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      const captchaResult = await captchaResponse.json();
+
+      if (!captchaResult.success) {
+        this.captchaError.set(true);
+        this.resetCaptcha();
+        this.isSubmitting.set(false);
+        return;
+      }
+
       const formData = this.contactForm.value;
 
       // Enviar email a través de la función de Netlify
@@ -670,6 +801,7 @@ export class ContactComponent implements OnInit {
       if (result.success) {
         this.submitSuccess.set(true);
         this.contactForm.reset();
+        this.resetCaptcha();
         // Ocultar mensaje de éxito después de 5 segundos
         setTimeout(() => this.submitSuccess.set(false), 5000);
       } else {
@@ -680,6 +812,7 @@ export class ContactComponent implements OnInit {
     } catch (error) {
       console.error('Error:', error);
       this.submitError.set(true);
+      this.resetCaptcha();
       setTimeout(() => this.submitError.set(false), 5000);
     } finally {
       this.isSubmitting.set(false);
