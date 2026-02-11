@@ -69,7 +69,12 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                         [alt]="skill.label"
                       />
                     } @else {
-                      <span class="skill-icon-fallback">{{ skill.icon || '💻' }}</span>
+                      <span class="skill-icon-fallback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="16 18 22 12 16 6"></polyline>
+                          <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                      </span>
                     }
                     <span class="skill-name">{{ skill.label }}</span>
                     @if (skill.is_featured) {
@@ -118,7 +123,13 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                         [alt]="skill.label"
                       />
                     } @else {
-                      <span class="skill-icon-fallback">{{ skill.icon || '⚡' }}</span>
+                      <span class="skill-icon-fallback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <line x1="3" y1="9" x2="21" y2="9"></line>
+                          <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>
+                      </span>
                     }
                     <span class="skill-name">{{ skill.label }}</span>
                     @if (skill.is_featured) {
@@ -165,7 +176,13 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                         [alt]="skill.label"
                       />
                     } @else {
-                      <span class="skill-icon-fallback">{{ skill.icon || '🗄️' }}</span>
+                      <span class="skill-icon-fallback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        </svg>
+                      </span>
                     }
                     <span class="skill-name">{{ skill.label }}</span>
                     @if (skill.is_featured) {
@@ -212,7 +229,13 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                         [alt]="skill.label"
                       />
                     } @else {
-                      <span class="skill-icon-fallback">{{ skill.icon || '🛠️' }}</span>
+                      <span class="skill-icon-fallback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path
+                            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+                          />
+                        </svg>
+                      </span>
                     }
                     <span class="skill-name">{{ skill.label }}</span>
                     @if (skill.is_featured) {

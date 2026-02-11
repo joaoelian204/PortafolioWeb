@@ -1,6 +1,16 @@
 const https = require('https');
 
+// Dominios permitidos
+const ALLOWED_ORIGINS = [
+  'https://portafolio-joao.netlify.app',
+  'http://localhost:4200' // Para desarrollo local
+];
+
 exports.handler = async (event) => {
+  // Obtener el origen de la solicitud
+  const origin = event.headers.origin || event.headers.Origin || '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+
   // Solo permitir POST
   if (event.httpMethod !== 'POST') {
     return {
@@ -11,7 +21,7 @@ exports.handler = async (event) => {
 
   // CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };

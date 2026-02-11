@@ -41,18 +41,29 @@ import { SupabaseService } from '../../core/services/supabase.service';
           <div class="projects-container">
             @for (project of projects(); track project.id) {
               <div class="project-card" [class.featured-card]="project.is_featured">
-                <!-- Header con título y badges -->
+                <!-- Header con título -->
                 <div class="project-header-bar">
                   <div class="header-left">
-                    <span class="file-icon">📄</span>
-                    <h3 class="project-title">{{ project.title }}</h3>
+                    <span class="file-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                          d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"
+                        />
+                      </svg>
+                    </span>
+                    <h3 class="project-title" [title]="project.title">{{ project.title }}</h3>
                   </div>
-                  @if (project.is_featured) {
-                    <span class="badge featured"
-                      >⭐ {{ i18n.language() === 'es' ? 'Destacado' : 'Featured' }}</span
-                    >
-                  }
                 </div>
+                @if (project.is_featured) {
+                  <span class="badge featured floating-badge">
+                    <svg class="badge-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                      />
+                    </svg>
+                    {{ i18n.language() === 'es' ? 'Destacado' : 'Featured' }}
+                  </span>
+                }
 
                 <!-- Galería de imágenes mejorada -->
                 @if (project.gallery_urls && project.gallery_urls.length > 0) {
@@ -399,6 +410,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
       }
 
       .project-card {
+        position: relative;
         background-color: var(--vscode-sideBar-background, #252526);
         border: 1px solid var(--vscode-panel-border, #3c3c3c);
         border-radius: 6px;
@@ -425,11 +437,9 @@ import { SupabaseService } from '../../core/services/supabase.service';
       .project-header-bar {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         padding: 6px 10px;
         background-color: var(--vscode-editor-background, #1e1e1e);
         border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
-        gap: 6px;
       }
 
       .header-left {
@@ -438,11 +448,21 @@ import { SupabaseService } from '../../core/services/supabase.service';
         gap: 6px;
         min-width: 0;
         flex: 1;
+        overflow: hidden;
       }
 
       .file-icon {
-        font-size: 12px;
+        width: 14px;
+        height: 14px;
         flex-shrink: 0;
+        color: #e8ab53;
+        display: flex;
+        align-items: center;
+      }
+
+      .file-icon svg {
+        width: 100%;
+        height: 100%;
       }
 
       .project-title {
@@ -458,17 +478,32 @@ import { SupabaseService } from '../../core/services/supabase.service';
       .badge {
         display: inline-flex;
         align-items: center;
-        padding: 2px 6px;
-        font-size: 9px;
-        font-weight: 600;
+        gap: 4px;
+        padding: 4px 10px;
+        font-size: 10px;
+        font-weight: 700;
         border-radius: 6px;
         white-space: nowrap;
-        flex-shrink: 0;
+      }
+
+      .badge-icon {
+        width: 12px;
+        height: 12px;
       }
 
       .badge.featured {
-        background-color: rgba(204, 167, 0, 0.2);
-        color: #e5c300;
+        background: linear-gradient(135deg, #f5a623 0%, #d4941a 100%);
+        color: #000;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 200, 0, 0.5);
+      }
+
+      .floating-badge {
+        position: absolute;
+        top: 38px;
+        right: 8px;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
       }
 
       /* Gallery Styles */

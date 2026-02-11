@@ -20,11 +20,11 @@ import { SupabaseService } from '../../core/services/supabase.service';
 
 <span class="punctuation">---</span>
 
-<span class="heading">## 👋 {{ i18n.language() === 'es' ? '¡Bienvenido!' : 'Welcome!' }}</span>
+<span class="heading">## {{ i18n.language() === 'es' ? '¡Bienvenido!' : 'Welcome!' }}</span>
 
 <span class="text">{{ i18n.language() === 'es' ? 'Gracias por visitar mi portafolio. Aquí encontrarás información sobre mí, mis habilidades, proyectos y experiencia.' : 'Thanks for visiting my portfolio. Here you will find information about me, my skills, projects, and experience.' }}</span>
 
-<span class="heading">## 🗂️ {{ i18n.t('readme.navigation') }}</span>
+<span class="heading">## {{ i18n.t('readme.navigation') }}</span>
 
 <span class="text">{{ i18n.t('readme.clickFiles') }}</span>
 
@@ -34,7 +34,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
 <span class="list">- <span class="file">experience.yaml</span> - {{ i18n.language() === 'es' ? 'Experiencia laboral' : 'Work experience' }}</span>
 <span class="list">- <span class="file">contact.tsx</span> - {{ i18n.language() === 'es' ? 'Formulario de contacto y mis redes sociales' : 'Contact form and my social links' }}</span>
 
-<span class="heading">## ⚙️ {{ i18n.language() === 'es' ? 'Configuración' : 'Settings' }}</span>
+<span class="heading">## {{ i18n.language() === 'es' ? 'Configuración' : 'Settings' }}</span>
 
 <span class="list">- <span class="file">settings.json</span> - {{ i18n.language() === 'es' ? 'Cambiar tema e idioma' : 'Change theme and language' }}</span>
 

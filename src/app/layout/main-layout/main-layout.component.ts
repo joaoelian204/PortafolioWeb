@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TerminalComponent } from '../../shared/terminal/terminal.component';
 import { ActivityBarComponent } from '../activity-bar/activity-bar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
-import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
 import { StatusBarComponent } from '../status-bar/status-bar.component';
+import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -14,6 +15,7 @@ import { StatusBarComponent } from '../status-bar/status-bar.component';
     SidebarComponent,
     TabsBarComponent,
     StatusBarComponent,
+    TerminalComponent,
   ],
   template: `
     <div class="vscode-layout">
@@ -48,95 +50,102 @@ import { StatusBarComponent } from '../status-bar/status-bar.component';
 
       <!-- Status Bar -->
       <app-status-bar />
+
+      <!-- Terminal Easter Egg (Ctrl + \`) -->
+      <app-terminal />
     </div>
   `,
-  styles: [`
-    .vscode-layout {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background-color: var(--vscode-editor-background, #1e1e1e);
-      color: var(--vscode-editor-foreground, #d4d4d4);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      overflow: hidden;
-    }
+  styles: [
+    `
+      .vscode-layout {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--vscode-editor-background, #1e1e1e);
+        color: var(--vscode-editor-foreground, #d4d4d4);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          'Open Sans', 'Helvetica Neue', sans-serif;
+        overflow: hidden;
+      }
 
-    .title-bar {
-      height: 30px;
-      background-color: var(--vscode-titleBar-activeBackground, #3c3c3c);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 12px;
-      -webkit-app-region: drag;
-    }
+      .title-bar {
+        height: 30px;
+        background-color: var(--vscode-titleBar-activeBackground, #3c3c3c);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        -webkit-app-region: drag;
+      }
 
-    .title-bar-left,
-    .title-bar-right {
-      width: 70px;
-    }
+      .title-bar-left,
+      .title-bar-right {
+        width: 70px;
+      }
 
-    .title-bar-center {
-      flex: 1;
-      text-align: center;
-    }
+      .title-bar-center {
+        flex: 1;
+        text-align: center;
+      }
 
-    .title {
-      font-size: 12px;
-      color: var(--vscode-titleBar-activeForeground, #cccccc);
-    }
+      .title {
+        font-size: 12px;
+        color: var(--vscode-titleBar-activeForeground, #cccccc);
+      }
 
-    .window-controls {
-      display: flex;
-      gap: 8px;
-      -webkit-app-region: no-drag;
-    }
+      .window-controls {
+        display: flex;
+        gap: 8px;
+        -webkit-app-region: no-drag;
+      }
 
-    .window-controls.macos .control {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
+      .window-controls.macos .control {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
 
-    .window-controls.macos .close {
-      background-color: #ff5f57;
-    }
+      .window-controls.macos .close {
+        background-color: #ff5f57;
+      }
 
-    .window-controls.macos .minimize {
-      background-color: #febc2e;
-    }
+      .window-controls.macos .minimize {
+        background-color: #febc2e;
+      }
 
-    .window-controls.macos .maximize {
-      background-color: #28c840;
-    }
+      .window-controls.macos .maximize {
+        background-color: #28c840;
+      }
 
-    .main-content {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-      position: relative;
-    }
+      .main-content {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
 
-    .content-wrapper {
-      flex: 1;
-      display: flex;
-      margin-left: 48px;
-      overflow: hidden;
-    }
+      .content-wrapper {
+        flex: 1;
+        display: flex;
+        margin-left: 48px;
+        overflow: hidden;
+      }
 
-    .editor-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+      .editor-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-    .editor-content {
-      flex: 1;
-      overflow: auto;
-      background-color: var(--vscode-editor-background, #1e1e1e);
-    }
-  `],
+      .editor-content {
+        flex: 1;
+        overflow: auto;
+        background-color: var(--vscode-editor-background, #1e1e1e);
+      }
+    `,
+  ],
 })
 export class MainLayoutComponent {}
