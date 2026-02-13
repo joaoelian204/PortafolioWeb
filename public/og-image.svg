@@ -1,0 +1,79 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e1e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#252526;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- VS Code title bar -->
+  <rect width="1200" height="35" fill="#323233"/>
+  <circle cx="20" cy="17" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="17" r="6" fill="#febc2e"/>
+  <circle cx="60" cy="17" r="6" fill="#28c840"/>
+  
+  <!-- Activity bar -->
+  <rect x="0" y="35" width="48" height="595" fill="#333333"/>
+  
+  <!-- Sidebar -->
+  <rect x="48" y="35" width="250" height="595" fill="#252526"/>
+  <text x="68" y="62" font-family="monospace" font-size="11" fill="#bbbbbb" text-transform="uppercase">EXPLORER</text>
+  
+  <!-- File items in sidebar -->
+  <text x="78" y="90" font-family="monospace" font-size="13" fill="#e06c75">📄 about.ts</text>
+  <text x="78" y="115" font-family="monospace" font-size="13" fill="#e5c07b">📄 skills.ts</text>
+  <text x="78" y="140" font-family="monospace" font-size="13" fill="#98c379">📄 projects.ts</text>
+  <text x="78" y="165" font-family="monospace" font-size="13" fill="#61afef">📄 experience.ts</text>
+  <text x="78" y="190" font-family="monospace" font-size="13" fill="#c678dd">📄 contact.ts</text>
+  
+  <!-- Main editor area -->
+  <rect x="298" y="35" width="902" height="595" fill="#1e1e1e"/>
+  
+  <!-- Tab bar -->
+  <rect x="298" y="35" width="902" height="35" fill="#2d2d2d"/>
+  <rect x="298" y="35" width="180" height="35" fill="#1e1e1e"/>
+  <text x="318" y="57" font-family="monospace" font-size="13" fill="#ffffff">portfolio.ts</text>
+  
+  <!-- Code content -->
+  <text x="330" y="110" font-family="monospace" font-size="16" fill="#569cd6">const</text>
+  <text x="390" y="110" font-family="monospace" font-size="16" fill="#9cdcfe"> developer</text>
+  <text x="510" y="110" font-family="monospace" font-size="16" fill="#d4d4d4"> = {</text>
+  
+  <text x="360" y="145" font-family="monospace" font-size="16" fill="#9cdcfe">name:</text>
+  <text x="430" y="145" font-family="monospace" font-size="16" fill="#ce9178"> 'Joao Moreira'</text>
+  <text x="610" y="145" font-family="monospace" font-size="16" fill="#d4d4d4">,</text>
+  
+  <text x="360" y="180" font-family="monospace" font-size="16" fill="#9cdcfe">role:</text>
+  <text x="430" y="180" font-family="monospace" font-size="16" fill="#ce9178"> 'Full Stack Developer'</text>
+  <text x="680" y="180" font-family="monospace" font-size="16" fill="#d4d4d4">,</text>
+  
+  <text x="360" y="215" font-family="monospace" font-size="16" fill="#9cdcfe">stack:</text>
+  <text x="440" y="215" font-family="monospace" font-size="16" fill="#d4d4d4"> [</text>
+  <text x="380" y="250" font-family="monospace" font-size="16" fill="#ce9178">'Angular'</text>
+  <text x="490" y="250" font-family="monospace" font-size="16" fill="#d4d4d4">,</text>
+  <text x="510" y="250" font-family="monospace" font-size="16" fill="#ce9178">'TypeScript'</text>
+  <text x="650" y="250" font-family="monospace" font-size="16" fill="#d4d4d4">,</text>
+  <text x="670" y="250" font-family="monospace" font-size="16" fill="#ce9178">'Node.js'</text>
+  <text x="380" y="285" font-family="monospace" font-size="16" fill="#ce9178">'Supabase'</text>
+  <text x="510" y="285" font-family="monospace" font-size="16" fill="#d4d4d4">,</text>
+  <text x="530" y="285" font-family="monospace" font-size="16" fill="#ce9178">'Netlify'</text>
+  <text x="360" y="320" font-family="monospace" font-size="16" fill="#d4d4d4">],</text>
+  
+  <text x="360" y="355" font-family="monospace" font-size="16" fill="#9cdcfe">website:</text>
+  <text x="460" y="355" font-family="monospace" font-size="16" fill="#ce9178"> 'joaomoreira.dev'</text>
+  
+  <text x="330" y="390" font-family="monospace" font-size="16" fill="#d4d4d4">};</text>
+  
+  <!-- VS Code logo -->
+  <g transform="translate(1050, 450) scale(0.8)">
+    <path d="M95.0167 24.3833L75.7667 7.05C74.6667 6.08333 73.2167 5.58333 71.7333 5.66667C70.25 5.75 68.8667 6.41667 67.8833 7.53333L27.6667 52.7333L11.3833 39.9333C10.1 38.9 8.43333 38.4833 6.81667 38.7833C5.2 39.0833 3.78333 40.0667 2.93333 41.4833L0.616667 45.2C-0.0166667 46.2833 -0.183333 47.5833 0.15 48.8C0.483333 50.0167 1.28333 51.05 2.38333 51.6833L16.0833 60L2.38333 68.3167C1.28333 68.95 0.483333 69.9833 0.15 71.2C-0.183333 72.4167 -0.0166667 73.7167 0.616667 74.8L2.93333 78.5167C3.78333 79.9333 5.2 80.9167 6.81667 81.2167C8.43333 81.5167 10.1 81.1 11.3833 80.0667L27.6667 67.2667L67.8833 112.467C68.8667 113.583 70.25 114.25 71.7333 114.333C73.2167 114.417 74.6667 113.917 75.7667 112.95L95.0167 95.6167C96.9333 93.9 98 91.4 98 88.7833V31.2167C98 28.6 96.9333 26.1 95.0167 24.3833ZM71.6667 84.0333L45.7167 60L71.6667 35.9667V84.0333Z" fill="#007ACC"/>
+  </g>
+  
+  <!-- Status bar -->
+  <rect x="0" y="595" width="1200" height="35" fill="#007ACC"/>
+  <text x="15" y="617" font-family="monospace" font-size="12" fill="#ffffff">main*</text>
+  <text x="1050" y="617" font-family="monospace" font-size="12" fill="#ffffff">TypeScript</text>
+</svg>

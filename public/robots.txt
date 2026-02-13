@@ -1,0 +1,11 @@
+# robots.txt - Joao Moreira Developer Portfolio
+# https://joaomoreira.dev
+
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /admin
+Disallow: /.netlify/
+
+# Sitemap location
+Sitemap: https://joaomoreira.dev/sitemap.xml
