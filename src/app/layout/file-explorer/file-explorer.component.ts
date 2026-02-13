@@ -12,7 +12,7 @@ import { I18nService } from '../../core/services/i18n.service';
     <div class="file-explorer">
       <!-- Header -->
       <div class="explorer-header">
-        <span class="explorer-title">{{ i18n.t('nav.explorer') }}</span>
+        <span class="explorer-title">{{ i18n.s('EXPLORADOR', 'EXPLORER') }}</span>
         <div class="explorer-actions">
           <button class="action-btn" title="New File">
             <svg viewBox="0 0 16 16" fill="currentColor">

@@ -25,7 +25,7 @@ interface SearchItem {
         }
         @case ('search') {
           <div class="sidebar-section">
-            <div class="section-header">{{ i18n.t('nav.search') }}</div>
+            <div class="section-header">{{ i18n.s('BUSCAR', 'SEARCH') }}</div>
             <div class="section-content">
               <div class="search-box">
                 <svg class="search-icon" viewBox="0 0 16 16" fill="currentColor">
@@ -35,9 +35,7 @@ interface SearchItem {
                 </svg>
                 <input
                   type="text"
-                  [placeholder]="
-                    i18n.language() === 'es' ? 'Buscar archivos...' : 'Search files...'
-                  "
+                  [placeholder]="i18n.s('Buscar archivos...', 'Search files...')"
                   class="search-input"
                   [value]="searchTerm()"
                   (input)="onSearchInput($event)"
@@ -58,7 +56,7 @@ interface SearchItem {
                   @if (filteredItems().length > 0) {
                     <div class="results-count">
                       {{ filteredItems().length }}
-                      {{ i18n.language() === 'es' ? 'resultado(s)' : 'result(s)' }}
+                      {{ i18n.s('resultado(s)', 'result(s)') }}
                     </div>
                     @for (item of filteredItems(); track item.route) {
                       <div class="search-result-item" (click)="openSearchResult(item)">
@@ -104,7 +102,7 @@ interface SearchItem {
                         <div class="result-info">
                           <span class="result-name">{{ item.name }}</span>
                           <span class="result-desc">{{
-                            i18n.language() === 'es' ? item.description : item.descriptionEn
+                            i18n.s(item.description, item.descriptionEn)
                           }}</span>
                         </div>
                       </div>
@@ -117,11 +115,7 @@ interface SearchItem {
                         />
                       </svg>
                       <p>
-                        {{
-                          i18n.language() === 'es'
-                            ? 'No se encontraron resultados'
-                            : 'No results found'
-                        }}
+                        {{ i18n.s('No se encontraron resultados', 'No results found') }}
                       </p>
                     </div>
                   }
@@ -130,9 +124,10 @@ interface SearchItem {
                 <div class="search-hint">
                   <p class="placeholder-text">
                     {{
-                      i18n.language() === 'es'
-                        ? 'Escribe para buscar en el portafolio'
-                        : 'Type to search across portfolio'
+                      i18n.s(
+                        'Escribe para buscar en el portafolio',
+                        'Type to search across portfolio'
+                      )
                     }}
                   </p>
                 </div>
@@ -142,7 +137,9 @@ interface SearchItem {
         }
         @case ('git') {
           <div class="sidebar-section">
-            <div class="section-header">{{ i18n.t('nav.sourceControl') }}</div>
+            <div class="section-header">
+              {{ i18n.s('CONTROL DE CÓDIGO FUENTE', 'SOURCE CONTROL') }}
+            </div>
             <div class="section-content">
               <div class="git-info">
                 <span class="git-branch">
@@ -151,7 +148,7 @@ interface SearchItem {
                       d="M14 6.5v-5l-1-1H8l-1 1v5l1 1h1.5v2.793l-2.854 2.854a.5.5 0 0 0 .708.707l2.146-2.147V13.5l1 1h5l1-1v-5l-1-1h-5l-1 1v1.793L6.854 12.5a.5.5 0 0 0-.708-.707L8.793 9.5H10.5v-2H12V6.5l1 1h1.5l1-1zM9 2h4v4H9V2zm5 10v2h-4v-2h4z"
                     />
                   </svg>
-                  {{ i18n.t('status.branch') }}
+                  {{ i18n.s('main', 'main') }}
                 </span>
               </div>
               <p class="placeholder-text">Portfolio repository is up to date</p>
@@ -160,48 +157,50 @@ interface SearchItem {
         }
         @case ('settings') {
           <div class="sidebar-section">
-            <div class="section-header">{{ i18n.t('settings.title') }}</div>
+            <div class="section-header">{{ i18n.s('CONFIGURACIÓN', 'SETTINGS') }}</div>
             <div class="section-content">
               <div class="setting-item">
-                <label class="setting-label">{{ i18n.t('settings.colorTheme') }}</label>
+                <label class="setting-label">{{ i18n.s('Tema de Color', 'Color Theme') }}</label>
                 <div class="theme-toggle">
                   <button
                     class="theme-btn"
                     [class.active]="themeService.theme() === 'dark'"
                     (click)="themeService.setTheme('dark')"
                   >
-                    {{ i18n.t('settings.dark') }}
+                    {{ i18n.s('Oscuro+', 'Dark+') }}
                   </button>
                   <button
                     class="theme-btn"
                     [class.active]="themeService.theme() === 'light'"
                     (click)="themeService.setTheme('light')"
                   >
-                    {{ i18n.t('settings.light') }}
+                    {{ i18n.s('Claro+', 'Light+') }}
                   </button>
                 </div>
               </div>
               <div class="setting-item">
-                <label class="setting-label">{{ i18n.t('settings.language') }}</label>
+                <label class="setting-label">{{ i18n.s('Idioma', 'Language') }}</label>
                 <div class="theme-toggle">
                   <button
                     class="theme-btn"
                     [class.active]="i18n.language() === 'es'"
                     (click)="i18n.setLanguage('es')"
                   >
-                    {{ i18n.t('settings.spanish') }}
+                    {{ i18n.s('Español', 'Spanish') }}
                   </button>
                   <button
                     class="theme-btn"
                     [class.active]="i18n.language() === 'en'"
                     (click)="i18n.setLanguage('en')"
                   >
-                    {{ i18n.t('settings.english') }}
+                    {{ i18n.s('Inglés', 'English') }}
                   </button>
                 </div>
               </div>
-              <p class="placeholder-text">{{ i18n.t('settings.font') }}</p>
-              <p class="placeholder-text">{{ i18n.t('settings.tabSize') }}</p>
+              <p class="placeholder-text">
+                {{ i18n.s('Fuente: Consolas, 14px', 'Font: Consolas, 14px') }}
+              </p>
+              <p class="placeholder-text">{{ i18n.s('Tamaño de Tabulación: 2', 'Tab Size: 2') }}</p>
             </div>
           </div>
         }

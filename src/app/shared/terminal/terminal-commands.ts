@@ -228,10 +228,22 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
   whoami: {
     name: 'whoami',
     description: 'Muestra información del usuario',
-    execute: (): TerminalOutput => {
+    execute: (_args: string[], terminal: TerminalState): TerminalOutput => {
+      const profile = terminal.portfolioData?.profile;
+      const name = profile?.name || 'Joao Moreira';
+      const title = profile?.title || 'Developer';
+      const location = profile?.location || 'Unknown';
+
       return {
         type: 'info',
-        content: `<span class="highlight">visitor</span>@<span class="highlight">joao-portfolio</span>`,
+        content: `<span class="highlight">visitor</span>@<span class="highlight">joao-portfolio</span>
+
+<span class="label">Host:</span>       ${name}
+<span class="label">Role:</span>       ${title}
+<span class="label">Location:</span>   ${location}
+<span class="label">Shell:</span>      portfolio-sh v1.0.0
+<span class="label">Session:</span>    ${new Date().toISOString().split('T')[0]}
+<span class="label">Permissions:</span> read-only (use <span class="cmd-name">sudo hire</span> to upgrade 😉)`,
         isHtml: true,
       };
     },
@@ -257,23 +269,34 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
   neofetch: {
     name: 'neofetch',
     description: 'Muestra información del sistema (portafolio)',
-    execute: (): TerminalOutput => {
+    execute: (_args: string[], terminal: TerminalState): TerminalOutput => {
+      const data = terminal.portfolioData;
+      const name = data?.profile?.name || 'Joao Moreira';
+      const title = data?.profile?.title || 'Developer';
+      const location = data?.profile?.location || 'Remote';
+      const skillCount = data?.skills?.length || 0;
+      const projectCount = data?.projects?.length || 0;
+      const expCount = data?.experiences?.length || 0;
+
       const info = `
 <span class="neofetch">
 <span class="ascii-small">    ╭──────────╮
     │  ◉    ◉  │
     │    ▽▽    │
     │  ╰────╯  │
-    ╰──────────╯</span>  <span class="highlight">visitor</span>@<span class="highlight">joao-portfolio</span>
+    ╰──────────╯</span>  <span class="highlight">${name}</span>
                  ─────────────────────
+                 <span class="label">Title:</span> ${title}
+                 <span class="label">Location:</span> ${location}
                  <span class="label">OS:</span> Portfolio VS Code Theme
-                 <span class="label">Host:</span> Angular 17+
+                 <span class="label">Host:</span> Angular 21+
                  <span class="label">Kernel:</span> TypeScript 5.x
                  <span class="label">Shell:</span> portfolio-sh 1.0.0
+                 <span class="label">Skills:</span> ${skillCount} technologies
+                 <span class="label">Projects:</span> ${projectCount} published
+                 <span class="label">Experience:</span> ${expCount} positions
                  <span class="label">Theme:</span> VS Code Dark+
-                 <span class="label">Terminal:</span> Easter Egg Terminal
-                 <span class="label">CPU:</span> Passion & Coffee
-                 <span class="label">Memory:</span> Infinite Ideas
+                 <span class="label">CPU:</span> Passion & Coffee ☕
 </span>`;
       return { type: 'info', content: info, isHtml: true };
     },
@@ -282,43 +305,89 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
   skills: {
     name: 'skills',
     description: 'Lista todas las habilidades técnicas',
-    execute: (): TerminalOutput => {
-      const skills = `
-<span class="section-title">Languages:</span>
-  TypeScript ████████████████████░░ 90%
-  JavaScript ██████████████████████ 95%
-  Python     ███████████████░░░░░░░ 75%
+    execute: (_args: string[], terminal: TerminalState): TerminalOutput => {
+      const data = terminal.portfolioData;
+      if (!data || data.skills.length === 0) {
+        return {
+          type: 'info',
+          content: `<span class="section-title">Skills:</span>\n\n  Loading... Run <span class="cmd-name">goto skills</span> to see all skills.\n\n  <span class="hint-text">Tip: Try again in a moment if data is still loading.</span>`,
+          isHtml: true,
+        };
+      }
 
-<span class="section-title">Frameworks:</span>
-  Angular    ████████████████████░░ 90%
-  React      ████████████████░░░░░░ 80%
-  Node.js    █████████████████░░░░░ 85%
+      const categories: Record<string, typeof data.skills> = {};
+      for (const skill of data.skills) {
+        const cat = skill.category || 'other';
+        if (!categories[cat]) categories[cat] = [];
+        categories[cat].push(skill);
+      }
 
-<span class="section-title">Databases:</span>
-  PostgreSQL █████████████████░░░░░ 85%
-  MongoDB    ████████████████░░░░░░ 80%
-  Supabase   █████████████████░░░░░ 85%`;
+      const categoryLabels: Record<string, string> = {
+        languages: 'Languages',
+        frameworks: 'Frameworks',
+        databases: 'Databases',
+        tools: 'Tools',
+        other: 'Other',
+      };
 
-      return { type: 'info', content: skills, isHtml: true };
+      let output = '';
+      for (const [cat, skills] of Object.entries(categories)) {
+        output += `\n<span class="section-title">${categoryLabels[cat] || cat}:</span>\n`;
+        for (const skill of skills) {
+          const filled = Math.round(skill.proficiency / 5);
+          const empty = 20 - filled;
+          const bar = '█'.repeat(filled) + '░'.repeat(empty);
+          const name = skill.label.padEnd(14);
+          output += `  ${name} ${bar} ${skill.proficiency}%\n`;
+        }
+      }
+
+      return { type: 'info', content: output.trim(), isHtml: true };
     },
   },
 
   contact: {
     name: 'contact',
     description: 'Muestra información de contacto',
-    execute: (): TerminalOutput => {
-      return {
-        type: 'info',
-        content: `
-<span class="section-title">Contact Information:</span>
+    execute: (_args: string[], terminal: TerminalState): TerminalOutput => {
+      const profile = terminal.portfolioData?.profile;
+      const social = profile?.socialLinks || {};
 
-  <span class="label">Email:</span>    Type 'open contact' to send a message
-  <span class="label">GitHub:</span>   github.com/joao
-  <span class="label">LinkedIn:</span> linkedin.com/in/joao
+      let output = `\n<span class="section-title">Contact Information:</span>\n`;
 
-  <span class="hint-text">Tip: Run 'open contact' to navigate to the contact form</span>`,
-        isHtml: true,
-      };
+      if (profile?.email) {
+        output += `\n  <span class="label">Email:</span>    ${profile.email}`;
+      }
+      if (profile?.location) {
+        output += `\n  <span class="label">Location:</span> ${profile.location}`;
+      }
+
+      const socialEntries: [string, string][] = [];
+      const socialMap = [
+        ['GitHub', 'github', 'github_enabled'],
+        ['LinkedIn', 'linkedin', 'linkedin_enabled'],
+        ['Twitter', 'twitter', 'twitter_enabled'],
+        ['Instagram', 'instagram', 'instagram_enabled'],
+        ['YouTube', 'youtube', 'youtube_enabled'],
+        ['Website', 'website', 'website_enabled'],
+      ];
+
+      for (const [label, key, enabledKey] of socialMap) {
+        if (social[key] && social[enabledKey] !== false) {
+          socialEntries.push([label, social[key] as string]);
+        }
+      }
+
+      if (socialEntries.length > 0) {
+        output += `\n\n<span class="section-title">Social Links:</span>\n`;
+        for (const [name, url] of socialEntries) {
+          output += `\n  <span class="label">${name.padEnd(10)}</span> ${url}`;
+        }
+      }
+
+      output += `\n\n  <span class="hint-text">Tip: Run 'goto contact' to send a message directly</span>`;
+
+      return { type: 'info', content: output, isHtml: true };
     },
   },
 
@@ -396,6 +465,144 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
       return { type: 'info', content: BANNER, isHtml: true };
     },
   },
+
+  goto: {
+    name: 'goto',
+    description: 'Navega a una sección del portafolio',
+    usage: 'goto <section>',
+    execute: (args: string[]): TerminalOutput => {
+      if (args.length === 0) {
+        return {
+          type: 'info',
+          content: `Usage: goto <section>
+
+Available sections:
+  <span class="cmd-name">home</span>        Go to homepage
+  <span class="cmd-name">about</span>       About me
+  <span class="cmd-name">skills</span>      Technical skills
+  <span class="cmd-name">projects</span>    Featured projects
+  <span class="cmd-name">experience</span>  Work experience
+  <span class="cmd-name">contact</span>     Contact form
+  <span class="cmd-name">settings</span>    Theme & language`,
+          isHtml: true,
+        };
+      }
+
+      const routes: Record<string, string> = {
+        home: '/',
+        about: '/about',
+        skills: '/skills',
+        projects: '/projects',
+        experience: '/experience',
+        contact: '/contact',
+        settings: '/settings',
+      };
+
+      const section = args[0].toLowerCase();
+      const route = routes[section];
+
+      if (!route) {
+        return {
+          type: 'error',
+          content: `goto: unknown section '${section}'. Type 'goto' for available sections.`,
+        };
+      }
+
+      return { type: 'system', content: `__NAVIGATE__${route}` };
+    },
+  },
+
+  download: {
+    name: 'download',
+    description: 'Descarga el CV/Resume',
+    usage: 'download cv',
+    execute: (args: string[]): TerminalOutput => {
+      if (args.length === 0 || args[0].toLowerCase() !== 'cv') {
+        return { type: 'info', content: `Usage: download cv\n\nDownloads the latest CV/Resume.` };
+      }
+
+      return {
+        type: 'system',
+        content: '__NAVIGATE__/about',
+      };
+    },
+  },
+
+  projects: {
+    name: 'projects',
+    description: 'Lista los proyectos destacados',
+    execute: (_args: string[], terminal: TerminalState): TerminalOutput => {
+      const data = terminal.portfolioData;
+      if (!data || data.projects.length === 0) {
+        return {
+          type: 'info',
+          content: `<span class="section-title">Projects:</span>\n\n  No projects loaded. Run <span class="cmd-name">goto projects</span> to see them.\n\n  <span class="hint-text">Tip: Try again in a moment if data is still loading.</span>`,
+          isHtml: true,
+        };
+      }
+
+      let output = `<span class="section-title">Published Projects (${data.projects.length}):</span>\n`;
+
+      for (let i = 0; i < data.projects.length; i++) {
+        const p = data.projects[i];
+        output += `\n  <span class="highlight">${i + 1}. ${p.title}</span>`;
+        if (p.description) {
+          const desc =
+            p.description.length > 80 ? p.description.substring(0, 77) + '...' : p.description;
+          output += `\n     ${desc}`;
+        }
+        if (p.techStack.length > 0) {
+          output += `\n     <span class="label">Tech:</span> ${p.techStack.join(', ')}`;
+        }
+        const links = [];
+        if (p.liveLink) links.push(`<span class="cmd-name">Live</span>: ${p.liveLink}`);
+        if (p.repoLink) links.push(`<span class="cmd-name">Repo</span>: ${p.repoLink}`);
+        if (links.length > 0) {
+          output += `\n     ${links.join('  |  ')}`;
+        }
+      }
+
+      output += `\n\n  <span class="hint-text">Run 'goto projects' for the full interactive view</span>`;
+
+      return { type: 'info', content: output, isHtml: true };
+    },
+  },
+
+  theme: {
+    name: 'theme',
+    description: 'Cambia el tema (dark/light)',
+    usage: 'theme <dark|light>',
+    execute: (args: string[]): TerminalOutput => {
+      if (args.length === 0) {
+        return {
+          type: 'info',
+          content: `Usage: theme <dark|light>\n\nCurrent theme can be changed in settings.\nRun <span class="cmd-name">goto settings</span> to open settings.`,
+          isHtml: true,
+        };
+      }
+      return { type: 'system', content: '__NAVIGATE__/settings' };
+    },
+  },
+
+  weather: {
+    name: 'weather',
+    description: 'Muestra el "clima" del código',
+    execute: (): TerminalOutput => {
+      const forecasts = [
+        '☀️  Clear skies — 0 bugs detected',
+        '⛅  Partly cloudy — minor refactoring needed',
+        '🌧️  Light rain — some warnings in console',
+        '⚡  Thunderstorm — merge conflict ahead!',
+        '🌈  After the storm — all tests passing!',
+      ];
+      const forecast = forecasts[Math.floor(Math.random() * forecasts.length)];
+      return {
+        type: 'info',
+        content: `<span class="section-title">Code Weather Forecast:</span>\n\n  ${forecast}\n\n  <span class="hint-text">Powered by /dev/random</span>`,
+        isHtml: true,
+      };
+    },
+  },
 };
 
 // Función para ejecutar comandos
@@ -454,3 +661,4 @@ export function getAutocompleteSuggestions(input: string, currentPath: string): 
 
 // Exportar el banner para uso inicial
 export { BANNER };
+

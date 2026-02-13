@@ -24,17 +24,26 @@ declare const hcaptcha: any;
         <div class="page-header">
           <span class="comment">// contact.tsx</span>
           <h1 class="page-title">
-            <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <svg
+              class="title-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              ></path>
               <polyline points="22,6 12,13 2,6"></polyline>
             </svg>
-            {{ i18n.language() === 'es' ? 'Contacto' : 'Contact' }}
+            {{ i18n.s('Contacto', 'Contact') }}
           </h1>
           <p class="page-subtitle">
             {{
-              i18n.language() === 'es'
-                ? '¿Tienes un proyecto en mente? ¡Hablemos!'
-                : "Have a project in mind? Let's talk!"
+              i18n.s(
+                '¿Tienes un proyecto en mente? ¡Hablemos!',
+                "Have a project in mind? Let's talk!"
+              )
             }}
           </p>
         </div>
@@ -58,12 +67,11 @@ declare const hcaptcha: any;
                   type="text"
                   formControlName="name"
                   class="input"
-                  [placeholder]="i18n.language() === 'es' ? 'Tu Nombre' : 'Your Name'"
+                  [placeholder]="i18n.s('Tu Nombre', 'Your Name')"
                 />
                 @if (contactForm.get('name')?.invalid && contactForm.get('name')?.touched) {
                   <span class="error"
-                    >// Error:
-                    {{ i18n.language() === 'es' ? 'nombre requerido' : 'name required' }}</span
+                    >// Error: {{ i18n.s('nombre requerido', 'name required') }}</span
                   >
                 }
               </div>
@@ -80,10 +88,7 @@ declare const hcaptcha: any;
                 />
                 @if (contactForm.get('email')?.invalid && contactForm.get('email')?.touched) {
                   <span class="error"
-                    >// Error:
-                    {{
-                      i18n.language() === 'es' ? 'email válido requerido' : 'valid email required'
-                    }}</span
+                    >// Error: {{ i18n.s('email válido requerido', 'valid email required') }}</span
                   >
                 }
               </div>
@@ -96,7 +101,7 @@ declare const hcaptcha: any;
                   type="text"
                   formControlName="subject"
                   class="input"
-                  [placeholder]="i18n.language() === 'es' ? 'Asunto' : 'Subject'"
+                  [placeholder]="i18n.s('Asunto', 'Subject')"
                 />
               </div>
 
@@ -107,13 +112,12 @@ declare const hcaptcha: any;
                 <textarea
                   formControlName="message"
                   class="input textarea"
-                  [placeholder]="i18n.language() === 'es' ? 'Tu mensaje...' : 'Your message...'"
+                  [placeholder]="i18n.s('Tu mensaje...', 'Your message...')"
                   rows="5"
                 ></textarea>
                 @if (contactForm.get('message')?.invalid && contactForm.get('message')?.touched) {
                   <span class="error"
-                    >// Error:
-                    {{ i18n.language() === 'es' ? 'mensaje requerido' : 'message required' }}</span
+                    >// Error: {{ i18n.s('mensaje requerido', 'message required') }}</span
                   >
                 }
               </div>
@@ -128,9 +132,7 @@ declare const hcaptcha: any;
                   <span class="error"
                     >// Error:
                     {{
-                      i18n.language() === 'es'
-                        ? 'Por favor completa el captcha'
-                        : 'Please complete the captcha'
+                      i18n.s('Por favor completa el captcha', 'Please complete the captcha')
                     }}</span
                   >
                 }
@@ -144,7 +146,7 @@ declare const hcaptcha: any;
                 @if (isSubmitting()) {
                   <span class="btn-content">
                     <span class="spinner"></span>
-                    {{ i18n.language() === 'es' ? 'Enviando...' : 'Sending...' }}
+                    {{ i18n.s('Enviando...', 'Sending...') }}
                   </span>
                 } @else {
                   <span class="btn-content">
@@ -152,7 +154,7 @@ declare const hcaptcha: any;
                       <line x1="22" y1="2" x2="11" y2="13"></line>
                       <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                     </svg>
-                    {{ i18n.language() === 'es' ? 'Enviar Mensaje' : 'Send Message' }}
+                    {{ i18n.s('Enviar Mensaje', 'Send Message') }}
                   </span>
                 }
               </button>
@@ -164,9 +166,7 @@ declare const hcaptcha: any;
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span>{{
-                    i18n.language() === 'es'
-                      ? '¡Mensaje enviado exitosamente!'
-                      : 'Message sent successfully!'
+                    i18n.s('¡Mensaje enviado exitosamente!', 'Message sent successfully!')
                   }}</span>
                 </div>
               }
@@ -179,9 +179,10 @@ declare const hcaptcha: any;
                     <line x1="9" y1="9" x2="15" y2="15"></line>
                   </svg>
                   <span>{{
-                    i18n.language() === 'es'
-                      ? 'Error al enviar. Por favor intenta de nuevo.'
-                      : 'Error sending. Please try again.'
+                    i18n.s(
+                      'Error al enviar. Por favor intenta de nuevo.',
+                      'Error sending. Please try again.'
+                    )
                   }}</span>
                 </div>
               }
@@ -197,11 +198,7 @@ declare const hcaptcha: any;
             <div class="info-card">
               <h3 class="info-title">
                 <span class="comment">// </span>
-                {{
-                  i18n.language() === 'es'
-                    ? 'También puedes encontrarme en'
-                    : 'You can also find me on'
-                }}
+                {{ i18n.s('También puedes encontrarme en', 'You can also find me on') }}
               </h3>
 
               <div class="social-links">
@@ -274,14 +271,10 @@ declare const hcaptcha: any;
               </div>
               <div class="response-text">
                 <span class="response-title">
-                  {{ i18n.language() === 'es' ? 'Tiempo de respuesta' : 'Response time' }}
+                  {{ i18n.s('Tiempo de respuesta', 'Response time') }}
                 </span>
                 <span class="response-value">
-                  {{
-                    i18n.language() === 'es'
-                      ? 'Generalmente dentro de 24 horas'
-                      : 'Usually within 24 hours'
-                  }}
+                  {{ i18n.s('Generalmente dentro de 24 horas', 'Usually within 24 hours') }}
                 </span>
               </div>
             </div>

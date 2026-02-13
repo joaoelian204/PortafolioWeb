@@ -1,11 +1,13 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { Experience } from '../../core/models/database.types';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     <div class="code-editor">
       @if (experiences().length > 0) {
@@ -27,21 +29,18 @@ import { SupabaseService } from '../../core/services/supabase.service';
               </svg>
             </div>
             <h3 class="empty-title">
-              {{ i18n.language() === 'es' ? 'Próximamente...' : 'Coming soon...' }}
+              {{ i18n.s('Próximamente...', 'Coming soon...') }}
             </h3>
             <p class="empty-message">
               <span class="comment"
-                >//
-                {{
-                  i18n.language() === 'es'
-                    ? 'Contenido en construcción'
-                    : 'Content under construction'
-                }}</span
+                >// {{ i18n.s('Contenido en construcción', 'Content under construction') }}</span
               >
             </p>
           </div>
         } @else {
-          <pre class="code"><span class="comment"># {{ i18n.t('experience.title') }}</span>
+          <pre
+            class="code"
+          ><span class="comment"># {{ i18n.s('experience.yaml', 'experience.yaml') }}</span>
 <span class="comment"># Professional Experience Timeline</span>
 
 <span class="key">version</span><span class="punctuation">:</span> <span class="string">"1.0"</span>
@@ -51,18 +50,18 @@ import { SupabaseService } from '../../core/services/supabase.service';
 @for (exp of experiences(); track exp.id; let i = $index) {
   <span class="punctuation">-</span> <span class="key">id</span><span class="punctuation">:</span> <span class="number">{{ i + 1 }}</span>
     <span class="key">company</span><span class="punctuation">:</span> <span class="string">"{{ exp.company }}"</span>
-    <span class="key">position</span><span class="punctuation">:</span> <span class="string">"{{ exp.position }}"</span>
-    <span class="key">location</span><span class="punctuation">:</span> <span class="string">"{{ exp.location || 'Remote' }}"</span>
+    <span class="key">position</span><span class="punctuation">:</span> <span class="string">"{{ exp.position | translate }}"</span>
+    <span class="key">location</span><span class="punctuation">:</span> <span class="string">"@if (exp.location) {{{ exp.location | translate }}} @else {Remote}"</span>
     <span class="key">period</span><span class="punctuation">:</span>
       <span class="key">start</span><span class="punctuation">:</span> <span class="string">"{{ formatDate(exp.start_date) }}"</span>
       <span class="key">end</span><span class="punctuation">:</span> @if (exp.is_current) {<span class="keyword">Present</span>} @else {<span class="string">"{{ formatDate(exp.end_date) }}"</span>}
       <span class="key">isCurrent</span><span class="punctuation">:</span> <span class="keyword">{{ exp.is_current }}</span>
     <span class="key">description</span><span class="punctuation">:</span> <span class="punctuation">|</span>
-      <span class="string">{{ exp.description || 'No description available.' }}</span>
+      <span class="string">@if (exp.description) {{{ exp.description | translate }}} @else {No description available.}</span>
 @if (exp.responsibilities && exp.responsibilities.length > 0) {
     <span class="key">responsibilities</span><span class="punctuation">:</span>
 @for (resp of exp.responsibilities; track resp) {
-      <span class="punctuation">-</span> <span class="string">"{{ resp }}"</span>
+      <span class="punctuation">-</span> <span class="string">"{{ resp | translate }}"</span>
 }
 }
 @if (exp.tech_used && exp.tech_used.length > 0) {

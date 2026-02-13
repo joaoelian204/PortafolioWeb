@@ -201,30 +201,69 @@ CREATE POLICY "Allow public read on published projects" ON projects
 CREATE POLICY "Allow public read on experiences" ON experiences
     FOR SELECT USING (true);
 
--- Políticas de escritura solo para usuarios autenticados
-CREATE POLICY "Allow authenticated insert on profile_info" ON profile_info
-    FOR INSERT TO authenticated WITH CHECK (true);
+-- ============================================
+-- TABLA: admin_users
+-- Lista de usuarios administradores autorizados
+-- ============================================
+CREATE TABLE IF NOT EXISTS admin_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT unique_admin_user UNIQUE (user_id)
+);
 
-CREATE POLICY "Allow authenticated update on profile_info" ON profile_info
-    FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow authenticated delete on profile_info" ON profile_info
-    FOR DELETE TO authenticated USING (true);
+-- Solo los propios admins pueden ver la tabla
+CREATE POLICY "Allow admin read on admin_users" ON admin_users
+    FOR SELECT TO authenticated
+    USING (user_id = auth.uid());
 
-CREATE POLICY "Allow authenticated insert on skills" ON skills
-    FOR INSERT TO authenticated WITH CHECK (true);
+-- Función auxiliar para verificar si el usuario actual es admin
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1 FROM admin_users WHERE user_id = auth.uid()
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE POLICY "Allow authenticated update on skills" ON skills
-    FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+-- ============================================
+-- INSTRUCCIONES DE CONFIGURACIÓN:
+-- Después de crear tu usuario en Supabase Auth,
+-- inserta tu user_id en admin_users:
+--
+-- INSERT INTO admin_users (user_id) VALUES ('TU-USER-UUID-AQUI');
+--
+-- Para obtener tu user_id, consulta:
+-- SELECT id FROM auth.users WHERE email = 'tu@email.com';
+-- ============================================
 
-CREATE POLICY "Allow authenticated delete on skills" ON skills
-    FOR DELETE TO authenticated USING (true);
+-- Políticas de escritura SOLO para administradores verificados
+CREATE POLICY "Allow admin insert on profile_info" ON profile_info
+    FOR INSERT TO authenticated WITH CHECK (is_admin());
 
-CREATE POLICY "Allow authenticated all on projects" ON projects
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow admin update on profile_info" ON profile_info
+    FOR UPDATE TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
-CREATE POLICY "Allow authenticated all on experiences" ON experiences
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow admin delete on profile_info" ON profile_info
+    FOR DELETE TO authenticated USING (is_admin());
+
+CREATE POLICY "Allow admin insert on skills" ON skills
+    FOR INSERT TO authenticated WITH CHECK (is_admin());
+
+CREATE POLICY "Allow admin update on skills" ON skills
+    FOR UPDATE TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+
+CREATE POLICY "Allow admin delete on skills" ON skills
+    FOR DELETE TO authenticated USING (is_admin());
+
+CREATE POLICY "Allow admin all on projects" ON projects
+    FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+
+CREATE POLICY "Allow admin all on experiences" ON experiences
+    FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- ============================================
 -- STORAGE BUCKET PARA IMÁGENES

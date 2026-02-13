@@ -26,7 +26,7 @@ import { I18nService } from '../../core/services/i18n.service';
                 <line x1="9" y1="15" x2="15" y2="15"></line>
               </svg>
               <h2 class="modal-title">
-                {{ i18n.language() === 'es' ? 'Descargar CV' : 'Download CV' }}
+                {{ i18n.s('Descargar CV', 'Download CV') }}
               </h2>
             </div>
             <button class="close-btn" (click)="close()" title="Close">
@@ -41,9 +41,10 @@ import { I18nService } from '../../core/services/i18n.service';
           <div class="modal-body">
             <p class="modal-description">
               {{
-                i18n.language() === 'es'
-                  ? 'Por favor, completa la verificación para descargar mi CV. Esto ayuda a prevenir descargas automatizadas.'
-                  : 'Please complete the verification to download my CV. This helps prevent automated downloads.'
+                i18n.s(
+                  'Por favor, completa la verificación para descargar mi CV. Esto ayuda a prevenir descargas automatizadas.',
+                  'Please complete the verification to download my CV. This helps prevent automated downloads.'
+                )
               }}
             </p>
 
@@ -60,7 +61,7 @@ import { I18nService } from '../../core/services/i18n.service';
               @if (isLoading()) {
                 <div class="loading-state">
                   <div class="spinner"></div>
-                  <span>{{ i18n.language() === 'es' ? 'Verificando...' : 'Verifying...' }}</span>
+                  <span>{{ i18n.s('Verificando...', 'Verifying...') }}</span>
                 </div>
               }
 
@@ -76,7 +77,7 @@ import { I18nService } from '../../core/services/i18n.service';
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
-                  <span>{{ i18n.language() === 'es' ? '¡Verificado!' : 'Verified!' }}</span>
+                  <span>{{ i18n.s('¡Verificado!', 'Verified!') }}</span>
                 </div>
               }
 
@@ -102,7 +103,7 @@ import { I18nService } from '../../core/services/i18n.service';
           <!-- Footer -->
           <div class="modal-footer">
             <button class="btn-secondary" (click)="close()">
-              {{ i18n.language() === 'es' ? 'Cancelar' : 'Cancel' }}
+              {{ i18n.s('Cancelar', 'Cancel') }}
             </button>
             <button
               class="btn-primary"
@@ -114,7 +115,7 @@ import { I18nService } from '../../core/services/i18n.service';
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              {{ i18n.language() === 'es' ? 'Descargar' : 'Download' }}
+              {{ i18n.s('Descargar', 'Download') }}
             </button>
           </div>
         </div>

@@ -24,6 +24,36 @@ export interface TerminalState {
   history: TerminalHistoryEntry[];
   commandHistory: string[];
   historyIndex: number;
+  portfolioData?: PortfolioData;
+}
+
+export interface PortfolioData {
+  profile: {
+    name: string;
+    title: string;
+    email: string;
+    location: string;
+    socialLinks: Record<string, string | boolean | undefined>;
+  } | null;
+  skills: {
+    label: string;
+    category: string;
+    proficiency: number;
+  }[];
+  projects: {
+    title: string;
+    description: string;
+    techStack: string[];
+    liveLink: string | null;
+    repoLink: string | null;
+  }[];
+  experiences: {
+    company: string;
+    position: string;
+    startDate: string;
+    endDate: string | null;
+    isCurrent: boolean;
+  }[];
 }
 
 export interface FileSystemNode {

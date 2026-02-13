@@ -10,12 +10,13 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
   template: `
     <div class="skills-page">
       <div class="skills-header">
-        <h1 class="page-title">{{ i18n.t('skills.title') }}</h1>
+        <h1 class="page-title">{{ i18n.s('skills.ts', 'skills.ts') }}</h1>
         <p class="page-subtitle">
           {{
-            i18n.language() === 'es'
-              ? 'Tecnologías y herramientas con las que trabajo'
-              : 'Technologies and tools I work with'
+            i18n.s(
+              'Tecnologías y herramientas con las que trabajo',
+              'Technologies and tools I work with'
+            )
           }}
         </p>
       </div>
@@ -29,12 +30,10 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
             </svg>
           </div>
           <h3 class="empty-title">
-            {{ i18n.language() === 'es' ? 'Próximamente...' : 'Coming soon...' }}
+            {{ i18n.s('Próximamente...', 'Coming soon...') }}
           </h3>
           <p class="empty-message">
-            {{
-              i18n.language() === 'es' ? 'Contenido en construcción' : 'Content under construction'
-            }}
+            {{ i18n.s('Contenido en construcción', 'Content under construction') }}
           </p>
         </div>
       } @else {
@@ -54,9 +53,7 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   <polyline points="8 6 2 12 8 18" />
                 </svg>
                 <h2 class="section-title">
-                  {{
-                    i18n.language() === 'es' ? 'Lenguajes de Programación' : 'Programming Languages'
-                  }}
+                  {{ i18n.s('Lenguajes de Programación', 'Programming Languages') }}
                 </h2>
               </div>
               <div class="skills-grid">
@@ -108,9 +105,7 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   <line x1="9" y1="21" x2="9" y2="9" />
                 </svg>
                 <h2 class="section-title">
-                  {{
-                    i18n.language() === 'es' ? 'Frameworks y Librerías' : 'Frameworks & Libraries'
-                  }}
+                  {{ i18n.s('Frameworks y Librerías', 'Frameworks & Libraries') }}
                 </h2>
               </div>
               <div class="skills-grid">
@@ -163,7 +158,7 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
                 </svg>
                 <h2 class="section-title">
-                  {{ i18n.language() === 'es' ? 'Bases de Datos' : 'Databases' }}
+                  {{ i18n.s('Bases de Datos', 'Databases') }}
                 </h2>
               </div>
               <div class="skills-grid">
@@ -216,7 +211,7 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   />
                 </svg>
                 <h2 class="section-title">
-                  {{ i18n.language() === 'es' ? 'Herramientas y DevOps' : 'Tools & DevOps' }}
+                  {{ i18n.s('Herramientas y DevOps', 'Tools & DevOps') }}
                 </h2>
               </div>
               <div class="skills-grid">

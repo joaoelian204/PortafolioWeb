@@ -1,11 +1,13 @@
 import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Project } from '../../core/models/database.types';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     <div class="code-editor">
       @if (projects().length > 0) {
@@ -24,16 +26,11 @@ import { SupabaseService } from '../../core/services/supabase.service';
               </svg>
             </div>
             <h3 class="empty-title">
-              {{ i18n.language() === 'es' ? 'Próximamente...' : 'Coming soon...' }}
+              {{ i18n.s('Próximamente...', 'Coming soon...') }}
             </h3>
             <p class="empty-message">
               <span class="comment"
-                >//
-                {{
-                  i18n.language() === 'es'
-                    ? 'Contenido en construcción'
-                    : 'Content under construction'
-                }}</span
+                >// {{ i18n.s('Contenido en construcción', 'Content under construction') }}</span
               >
             </p>
           </div>
@@ -61,7 +58,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
                         d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
                       />
                     </svg>
-                    {{ i18n.language() === 'es' ? 'Destacado' : 'Featured' }}
+                    {{ i18n.s('Destacado', 'Featured') }}
                   </span>
                 }
 
@@ -163,7 +160,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
                         <polyline points="21 15 16 10 5 21"></polyline>
                       </svg>
-                      <span>{{ i18n.language() === 'es' ? 'Sin imagen' : 'No image' }}</span>
+                      <span>{{ i18n.s('Sin imagen', 'No image') }}</span>
                     </div>
                   </div>
                 }
@@ -175,18 +172,14 @@ import { SupabaseService } from '../../core/services/supabase.service';
                       class="project-description"
                       [class.expanded]="isDescriptionExpanded(project.id)"
                     >
-                      {{ project.description }}
+                      {{ project.description | translate }}
                     </p>
                     @if (project.description && project.description.length > 80) {
                       <button class="see-more-btn" (click)="toggleDescription(project.id)">
                         {{
                           isDescriptionExpanded(project.id)
-                            ? i18n.language() === 'es'
-                              ? 'Ver menos'
-                              : 'See less'
-                            : i18n.language() === 'es'
-                              ? 'Ver más'
-                              : 'See more'
+                            ? i18n.s('Ver menos', 'See less')
+                            : i18n.s('Ver más', 'See more')
                         }}
                       </button>
                     }
@@ -200,7 +193,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
                           d="M14 1H3L2 2v12l1 1h11l1-1V2l-1-1zM8 13H3.5L8 8.5V13zm0-5.207L3.207 3H8v4.793zM12.5 13H9V8.5l4.5 4.5H12.5zM13 7.793V3H9.207L13 6.793V7.793z"
                         />
                       </svg>
-                      {{ i18n.language() === 'es' ? 'Tecnologías' : 'Technologies' }}
+                      {{ i18n.s('Tecnologías', 'Technologies') }}
                     </span>
                     <div class="project-tech">
                       @for (tech of project.tech_stack; track tech) {
@@ -223,7 +216,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
                           <polyline points="15 3 21 3 21 9"></polyline>
                           <line x1="10" y1="14" x2="21" y2="3"></line>
                         </svg>
-                        {{ i18n.t('projects.liveDemo') }}
+                        {{ i18n.s('Ver Demo', 'Live Demo') }}
                       </a>
                     }
                     @if (project.repo_link) {
@@ -238,7 +231,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
                             d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"
                           />
                         </svg>
-                        {{ i18n.t('projects.repository') }}
+                        {{ i18n.s('Repositorio', 'Repository') }}
                       </a>
                     }
                   </div>
@@ -421,6 +414,43 @@ import { SupabaseService } from '../../core/services/supabase.service';
         width: 320px;
         max-width: 100%;
         flex-shrink: 0;
+        animation: cardFadeIn 0.5s ease-out both;
+      }
+
+      .project-card:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .project-card:nth-child(2) {
+        animation-delay: 0.08s;
+      }
+      .project-card:nth-child(3) {
+        animation-delay: 0.16s;
+      }
+      .project-card:nth-child(4) {
+        animation-delay: 0.24s;
+      }
+      .project-card:nth-child(5) {
+        animation-delay: 0.32s;
+      }
+      .project-card:nth-child(6) {
+        animation-delay: 0.4s;
+      }
+      .project-card:nth-child(7) {
+        animation-delay: 0.48s;
+      }
+      .project-card:nth-child(8) {
+        animation-delay: 0.56s;
+      }
+
+      @keyframes cardFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
 
       .project-card:hover {
@@ -517,6 +547,28 @@ import { SupabaseService } from '../../core/services/supabase.service';
         width: 100%;
         height: 160px;
         overflow: hidden;
+        background: linear-gradient(
+          90deg,
+          var(--vscode-editor-background, #1e1e1e) 25%,
+          var(--vscode-sideBar-background, #252526) 50%,
+          var(--vscode-editor-background, #1e1e1e) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s ease-in-out infinite;
+      }
+
+      .gallery-main:has(img[complete]) {
+        animation: none;
+        background: var(--vscode-editor-background, #1e1e1e);
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
       }
 
       .gallery-main.single img {

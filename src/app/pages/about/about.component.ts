@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ProfileInfo } from '../../core/models/database.types';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-download-modal.component';
@@ -7,7 +8,7 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CvDownloadModalComponent],
+  imports: [CvDownloadModalComponent, TranslatePipe],
   template: `
     <div class="code-editor">
       <div class="line-numbers">
@@ -20,25 +21,30 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
           <span class="comment"># about.md</span>
 
           <h1 class="heading">
-            {{ profile()?.name || (i18n.language() === 'es' ? 'Acerca de Mí' : 'About Me') }}
+            {{ profile()?.name || i18n.s('Acerca de Mí', 'About Me') }}
           </h1>
 
           <h2 class="subheading">
-            {{
-              profile()?.title ||
-                (i18n.language() === 'es' ? 'Desarrollador de Software' : 'Software Developer')
-            }}
+            @if (profile()?.title) {
+              {{ profile()!.title | translate }}
+            } @else {
+              {{ i18n.s('Desarrollador de Software', 'Software Developer') }}
+            }
           </h2>
 
           <div class="divider">---</div>
 
           <p class="text">
-            {{
-              profile()?.bio ||
-                (i18n.language() === 'es'
-                  ? 'Un desarrollador apasionado creando experiencias digitales increíbles.'
-                  : 'A passionate developer building amazing digital experiences.')
-            }}
+            @if (profile()?.bio) {
+              {{ profile()!.bio | translate }}
+            } @else {
+              {{
+                i18n.s(
+                  'Un desarrollador apasionado creando experiencias digitales increíbles.',
+                  'A passionate developer building amazing digital experiences.'
+                )
+              }}
+            }
           </p>
 
           <h2 class="subheading">
@@ -52,11 +58,15 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            {{ i18n.language() === 'es' ? 'Ubicación' : 'Location' }}
+            {{ i18n.s('Ubicación', 'Location') }}
           </h2>
 
           <p class="text">
-            {{ profile()?.location || (i18n.language() === 'es' ? 'Remoto' : 'Remote') }}
+            @if (profile()?.location) {
+              {{ profile()!.location | translate }}
+            } @else {
+              {{ i18n.s('Remoto', 'Remote') }}
+            }
           </p>
 
           <h2 class="subheading">
@@ -78,24 +88,21 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
               <path d="M2 12h1" />
               <path d="M21 12h1" />
             </svg>
-            {{ i18n.language() === 'es' ? 'Filosofía' : 'Philosophy' }}
+            {{ i18n.s('Filosofía', 'Philosophy') }}
           </h2>
 
           <blockquote class="blockquote">
             "{{
-              i18n.language() === 'es'
-                ? 'El código limpio siempre parece escrito por alguien que se preocupa.'
-                : 'Clean code always looks like it was written by someone who cares.'
+              i18n.s(
+                'El código limpio siempre parece escrito por alguien que se preocupa.',
+                'Clean code always looks like it was written by someone who cares.'
+              )
             }}"
             <footer>— Robert C. Martin</footer>
           </blockquote>
 
           <p class="text">
-            {{
-              i18n.language() === 'es'
-                ? 'Creo en escribir código que sea:'
-                : 'I believe in writing code that is:'
-            }}
+            {{ i18n.s('Creo en escribir código que sea:', 'I believe in writing code that is:') }}
           </p>
 
           <ul class="list">
@@ -111,12 +118,8 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                   points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
                 />
               </svg>
-              <strong>{{ i18n.language() === 'es' ? 'Limpio' : 'Clean' }}</strong> -
-              {{
-                i18n.language() === 'es'
-                  ? 'Fácil de leer y entender'
-                  : 'Easy to read and understand'
-              }}
+              <strong>{{ i18n.s('Limpio', 'Clean') }}</strong> -
+              {{ i18n.s('Fácil de leer y entender', 'Easy to read and understand') }}
             </li>
             <li>
               <svg
@@ -130,12 +133,8 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                   d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"
                 />
               </svg>
-              <strong>{{ i18n.language() === 'es' ? 'Mantenible' : 'Maintainable' }}</strong> -
-              {{
-                i18n.language() === 'es'
-                  ? 'Simple de modificar y extender'
-                  : 'Simple to modify and extend'
-              }}
+              <strong>{{ i18n.s('Mantenible', 'Maintainable') }}</strong> -
+              {{ i18n.s('Simple de modificar y extender', 'Simple to modify and extend') }}
             </li>
             <li>
               <svg
@@ -147,11 +146,12 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
               >
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
-              <strong>{{ i18n.language() === 'es' ? 'Eficiente' : 'Performant' }}</strong> -
+              <strong>{{ i18n.s('Eficiente', 'Performant') }}</strong> -
               {{
-                i18n.language() === 'es'
-                  ? 'Optimizado para velocidad y eficiencia'
-                  : 'Optimized for speed and efficiency'
+                i18n.s(
+                  'Optimizado para velocidad y eficiencia',
+                  'Optimized for speed and efficiency'
+                )
               }}
             </li>
             <li>
@@ -168,8 +168,8 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 <path d="M10 12l-2 8" />
                 <path d="M14 12l2 8" />
               </svg>
-              <strong>{{ i18n.language() === 'es' ? 'Accesible' : 'Accessible' }}</strong> -
-              {{ i18n.language() === 'es' ? 'Usable por todos' : 'Usable by everyone' }}
+              <strong>{{ i18n.s('Accesible', 'Accessible') }}</strong> -
+              {{ i18n.s('Usable por todos', 'Usable by everyone') }}
             </li>
           </ul>
 
@@ -185,7 +185,7 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
               <circle cx="12" cy="12" r="6" />
               <circle cx="12" cy="12" r="2" />
             </svg>
-            {{ i18n.language() === 'es' ? 'Enfoque Actual' : 'Current Focus' }}
+            {{ i18n.s('Enfoque Actual', 'Current Focus') }}
           </h2>
 
           <ul class="list">
@@ -204,9 +204,10 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 />
               </svg>
               {{
-                i18n.language() === 'es'
-                  ? 'Construyendo aplicaciones web escalables'
-                  : 'Building scalable web applications'
+                i18n.s(
+                  'Construyendo aplicaciones web escalables',
+                  'Building scalable web applications'
+                )
               }}
             </li>
             <li>
@@ -220,11 +221,7 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
                 <line x1="12" y1="18" x2="12.01" y2="18" />
               </svg>
-              {{
-                i18n.language() === 'es'
-                  ? 'Creando interfaces responsivas'
-                  : 'Creating responsive user interfaces'
-              }}
+              {{ i18n.s('Creando interfaces responsivas', 'Creating responsive user interfaces') }}
             </li>
             <li>
               <svg
@@ -238,11 +235,7 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 <polyline points="1 20 1 14 7 14" />
                 <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
               </svg>
-              {{
-                i18n.language() === 'es'
-                  ? 'Implementando pipelines CI/CD'
-                  : 'Implementing CI/CD pipelines'
-              }}
+              {{ i18n.s('Implementando pipelines CI/CD', 'Implementing CI/CD pipelines') }}
             </li>
             <li>
               <svg
@@ -255,11 +248,7 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
               </svg>
-              {{
-                i18n.language() === 'es'
-                  ? 'Aprendiendo nuevas tecnologías'
-                  : 'Learning new technologies'
-              }}
+              {{ i18n.s('Aprendiendo nuevas tecnologías', 'Learning new technologies') }}
             </li>
           </ul>
 
@@ -280,7 +269,7 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 <line x1="12" y1="18" x2="12" y2="12"></line>
                 <line x1="9" y1="15" x2="15" y2="15"></line>
               </svg>
-              {{ i18n.language() === 'es' ? 'Currículum' : 'Resume' }}
+              {{ i18n.s('Currículum', 'Resume') }}
             </h2>
             <button class="cv-download-btn" (click)="openCvModal()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -288,15 +277,13 @@ import { CvDownloadModalComponent } from '../../shared/cv-download-modal/cv-down
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              {{ i18n.language() === 'es' ? 'Descargar CV' : 'Download CV' }}
+              {{ i18n.s('Descargar CV', 'Download CV') }}
             </button>
           </div>
 
           <div class="divider">---</div>
 
-          <p class="comment">
-            *{{ i18n.language() === 'es' ? 'Última actualización' : 'Last updated' }}: {{ today }}*
-          </p>
+          <p class="comment">*{{ i18n.s('Última actualización', 'Last updated') }}: {{ today }}*</p>
         </div>
       </div>
     </div>

@@ -302,6 +302,28 @@ select:focus-visible {
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(-10px);
@@ -313,12 +335,61 @@ select:focus-visible {
   }
 }
 
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+/* Page transition animation - applied to editor-content children */
+.editor-content > * {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Staggered animation utility classes */
+.animate-in {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.animate-in-left {
+  animation: fadeInLeft 0.5s ease-out both;
+}
+
+.animate-scale {
+  animation: scaleIn 0.4s ease-out both;
+}
+
+/* Stagger delays for lists */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.4s; }
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .editor-content > *,
+  .animate-in,
+  .animate-in-left,
+  .animate-scale {
+    animation: none !important;
   }
 }
 

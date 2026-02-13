@@ -1,4 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { TerminalService } from '../../shared/terminal/terminal.service';
@@ -15,7 +17,7 @@ import { TerminalService } from '../../shared/terminal/terminal.service';
               d="M14 6.5v-5l-1-1H8l-1 1v5l1 1h1.5v2.793l-2.854 2.854a.5.5 0 0 0 .708.707l2.146-2.147V13.5l1 1h5l1-1v-5l-1-1h-5l-1 1v1.793L6.854 12.5a.5.5 0 0 0-.708-.707L8.793 9.5H10.5v-2H12V6.5l1 1h1.5l1-1z"
             />
           </svg>
-          <span>{{ i18n.t('status.branch') }}</span>
+          <span>{{ i18n.s('main', 'main') }}</span>
         </div>
         <div class="status-item sync">
           <svg viewBox="0 0 16 16" fill="currentColor">
@@ -42,10 +44,12 @@ import { TerminalService } from '../../shared/terminal/terminal.service';
         </div>
       </div>
       <div class="status-right">
-        <div class="status-item">{{ i18n.t('status.line') }} 1, {{ i18n.t('status.col') }} 1</div>
-        <div class="status-item">{{ i18n.t('status.spaces') }}: 2</div>
-        <div class="status-item">{{ i18n.t('status.encoding') }}</div>
-        <div class="status-item">{{ i18n.t('status.language') }}</div>
+        <div class="status-item">
+          {{ i18n.s('Ln', 'Ln') }} {{ currentLine }}, {{ i18n.s('Col', 'Col') }} {{ currentCol }}
+        </div>
+        <div class="status-item">{{ i18n.s('Espacios', 'Spaces') }}: 2</div>
+        <div class="status-item">{{ i18n.s('UTF-8', 'UTF-8') }}</div>
+        <div class="status-item file-type">{{ currentFileType }}</div>
         @if (supabase.isAuthenticated()) {
           <div class="status-item authenticated">
             <svg viewBox="0 0 16 16" fill="currentColor">
@@ -53,7 +57,7 @@ import { TerminalService } from '../../shared/terminal/terminal.service';
                 d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12zm3-8H5v1h6V6zm0 3H5v1h6V9z"
               />
             </svg>
-            <span>{{ i18n.t('status.authenticated') }}</span>
+            <span>{{ i18n.s('Admin', 'Admin') }}</span>
           </div>
         }
         <div class="status-item notification">
@@ -142,11 +146,78 @@ import { TerminalService } from '../../shared/terminal/terminal.service';
         font-size: 10px;
         opacity: 0.8;
       }
+
+      .file-type {
+        text-transform: capitalize;
+      }
     `,
   ],
 })
-export class StatusBarComponent {
+export class StatusBarComponent implements OnInit, OnDestroy {
   supabase = inject(SupabaseService);
   i18n = inject(I18nService);
   terminalService = inject(TerminalService);
+  private router = inject(Router);
+
+  currentLine = 1;
+  currentCol = 1;
+  currentFileType = 'TypeScript';
+  private scrollListener: (() => void) | null = null;
+  private routeSub: any;
+
+  private fileTypeMap: Record<string, string> = {
+    '': 'TypeScript',
+    home: 'TypeScript',
+    about: 'Markdown',
+    skills: 'JSON',
+    projects: 'TypeScript React',
+    experience: 'YAML',
+    contact: 'HTML',
+    settings: 'JSON',
+    admin: 'TypeScript',
+    login: 'TypeScript',
+  };
+
+  ngOnInit() {
+    this.routeSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        const route = e.urlAfterRedirects.split('/')[1] || '';
+        this.currentFileType = this.fileTypeMap[route] || 'TypeScript';
+        this.currentLine = 1;
+        this.currentCol = 1;
+      });
+
+    setTimeout(() => this.attachScrollListener(), 300);
+  }
+
+  ngOnDestroy() {
+    this.routeSub?.unsubscribe();
+    this.detachScrollListener();
+  }
+
+  private attachScrollListener() {
+    const editorContent = document.querySelector('.editor-content');
+    if (!editorContent) return;
+
+    const handler = () => {
+      const el = editorContent as HTMLElement;
+      const scrollTop = el.scrollTop;
+      const scrollHeight = el.scrollHeight - el.clientHeight;
+      const totalLines = Math.max(1, Math.round(scrollHeight / 20));
+      this.currentLine = Math.max(
+        1,
+        Math.round((scrollTop / Math.max(1, scrollHeight)) * totalLines),
+      );
+      this.currentCol = Math.floor(Math.random() * 40) + 1;
+    };
+
+    editorContent.addEventListener('scroll', handler, { passive: true });
+    this.scrollListener = () => editorContent.removeEventListener('scroll', handler);
+  }
+
+  private detachScrollListener() {
+    this.scrollListener?.();
+    this.scrollListener = null;
+  }
 }

@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { EditorStateService } from '../../core/services/editor-state.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
@@ -52,6 +53,25 @@ import { ThemeService } from '../../core/services/theme.service';
         </button>
       </div>
 
+      <!-- Indicador de ruta activa -->
+      <div class="route-indicator">
+        @if (currentRoute === '/') {
+          <span class="route-dot home" title="README.md"></span>
+        } @else if (currentRoute === '/about') {
+          <span class="route-dot about" title="about.md"></span>
+        } @else if (currentRoute === '/skills') {
+          <span class="route-dot skills" title="skills.ts"></span>
+        } @else if (currentRoute === '/projects') {
+          <span class="route-dot projects" title="projects.tsx"></span>
+        } @else if (currentRoute === '/experience') {
+          <span class="route-dot experience" title="experience.yaml"></span>
+        } @else if (currentRoute === '/contact') {
+          <span class="route-dot contact" title="contact.tsx"></span>
+        } @else if (currentRoute === '/settings') {
+          <span class="route-dot settings" title="settings.json"></span>
+        }
+      </div>
+
       <!-- Iconos inferiores -->
       <div class="activity-icons-bottom">
         @if (supabase.isAuthenticated()) {
@@ -89,11 +109,9 @@ import { ThemeService } from '../../core/services/theme.service';
         <button
           class="activity-icon"
           (click)="i18n.setLanguage(i18n.language() === 'es' ? 'en' : 'es')"
-          [title]="i18n.language() === 'es' ? 'Switch to English' : 'Cambiar a Español'"
+          [title]="i18n.s('Switch to English', 'Cambiar a Español')"
         >
-          <span style="font-size: 18px; font-weight: bold;">{{
-            i18n.language() === 'es' ? 'EN' : 'ES'
-          }}</span>
+          <span style="font-size: 18px; font-weight: bold;">{{ i18n.s('EN', 'ES') }}</span>
         </button>
 
         <button
@@ -170,6 +188,50 @@ import { ThemeService } from '../../core/services/theme.service';
         width: 24px;
         height: 24px;
       }
+
+      /* Route indicator */
+      .route-indicator {
+        display: flex;
+        justify-content: center;
+        padding: 4px 0;
+      }
+
+      .route-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 6px currentColor;
+      }
+
+      .route-dot.home {
+        background: #6a9955;
+        color: #6a9955;
+      }
+      .route-dot.about {
+        background: #569cd6;
+        color: #569cd6;
+      }
+      .route-dot.skills {
+        background: #4ec9b0;
+        color: #4ec9b0;
+      }
+      .route-dot.projects {
+        background: #dcdcaa;
+        color: #dcdcaa;
+      }
+      .route-dot.experience {
+        background: #ce9178;
+        color: #ce9178;
+      }
+      .route-dot.contact {
+        background: #c586c0;
+        color: #c586c0;
+      }
+      .route-dot.settings {
+        background: #d7ba7d;
+        color: #d7ba7d;
+      }
     `,
   ],
 })
@@ -179,6 +241,16 @@ export class ActivityBarComponent {
   themeService = inject(ThemeService);
   i18n = inject(I18nService);
   private router = inject(Router);
+
+  currentRoute = '/';
+
+  constructor() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this.currentRoute = (event as NavigationEnd).urlAfterRedirects || '/';
+      });
+  }
 
   goToAdmin(): void {
     this.router.navigate(['/admin']);

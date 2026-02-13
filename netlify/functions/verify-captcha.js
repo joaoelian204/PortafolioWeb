@@ -1,15 +1,52 @@
 const https = require('https');
 
-// Dominios permitidos
+// Dominios permitidos (solo producción)
 const ALLOWED_ORIGINS = [
   'https://portafolio-joao.netlify.app',
-  'http://localhost:4200' // Para desarrollo local
 ];
 
+// Rate limiting simple (por IP)
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minuto
+const RATE_LIMIT_MAX = 10; // máximo 10 verificaciones por minuto
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+
+  if (!record || now - record.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { windowStart: now, count: 1 });
+    return false;
+  }
+
+  record.count++;
+  if (record.count > RATE_LIMIT_MAX) {
+    return true;
+  }
+  return false;
+}
+
 exports.handler = async (event) => {
+  // Obtener IP del cliente
+  const clientIp = event.headers['x-forwarded-for'] || event.headers['client-ip'] || 'unknown';
+
   // Obtener el origen de la solicitud
   const origin = event.headers.origin || event.headers.Origin || '';
   const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': allowedOrigin,
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Max-Age': '86400',
+      },
+      body: '',
+    };
+  }
 
   // Solo permitir POST
   if (event.httpMethod !== 'POST') {
@@ -26,14 +63,43 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json',
   };
 
-  try {
-    const { token } = JSON.parse(event.body);
+  // Rate limiting
+  if (isRateLimited(clientIp)) {
+    return {
+      statusCode: 429,
+      headers,
+      body: JSON.stringify({ success: false, error: 'Too many requests. Please try again later.' }),
+    };
+  }
 
-    if (!token) {
+  try {
+    // Validar body
+    if (!event.body) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ success: false, error: 'Token is required' }),
+        body: JSON.stringify({ success: false, error: 'Request body is required' }),
+      };
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(event.body);
+    } catch {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Invalid JSON body' }),
+      };
+    }
+
+    const { token } = parsed;
+
+    if (!token || typeof token !== 'string' || token.length > 5000) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Valid token is required' }),
       };
     }
 

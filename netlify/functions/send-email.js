@@ -1,17 +1,78 @@
 const https = require('https');
 
-// Dominios permitidos
+// Dominios permitidos (solo producción)
 const ALLOWED_ORIGINS = [
   'https://portafolio-joao.netlify.app',
-  'http://localhost:4200' // Para desarrollo local
 ];
 
+// Sanitizar HTML para prevenir XSS/inyección
+function sanitizeHtml(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Validar formato de email
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email) && email.length <= 254;
+}
+
+// Limitar longitud de campos
+const MAX_LENGTHS = {
+  name: 100,
+  email: 254,
+  subject: 200,
+  message: 5000,
+};
+
+// Rate limiting simple en memoria (por IP)
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minuto
+const RATE_LIMIT_MAX = 3; // máximo 3 emails por minuto
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+
+  if (!record || now - record.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { windowStart: now, count: 1 });
+    return false;
+  }
+
+  record.count++;
+  if (record.count > RATE_LIMIT_MAX) {
+    return true;
+  }
+  return false;
+}
+
 exports.handler = async (event) => {
+  // Obtener IP del cliente
+  const clientIp = event.headers['x-forwarded-for'] || event.headers['client-ip'] || 'unknown';
+
   // Obtener el origen de la solicitud
   const origin = event.headers.origin || event.headers.Origin || '';
   const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
 
-  // Solo permitir POST
+  // Solo permitir POST y OPTIONS
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': allowedOrigin,
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Max-Age': '86400',
+      },
+      body: '',
+    };
+  }
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -26,17 +87,37 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json',
   };
 
-  // Handle preflight request
-  if (event.httpMethod === 'OPTIONS') {
+  // Rate limiting
+  if (isRateLimited(clientIp)) {
     return {
-      statusCode: 200,
+      statusCode: 429,
       headers,
-      body: '',
+      body: JSON.stringify({ success: false, error: 'Too many requests. Please try again later.' }),
     };
   }
 
   try {
-    const { name, email, subject, message } = JSON.parse(event.body);
+    // Validar que el body exista y sea JSON válido
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Request body is required' }),
+      };
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(event.body);
+    } catch {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Invalid JSON body' }),
+      };
+    }
+
+    const { name, email, subject, message } = parsed;
 
     // Validar campos requeridos
     if (!name || !email || !message) {
@@ -44,6 +125,34 @@ exports.handler = async (event) => {
         statusCode: 400,
         headers,
         body: JSON.stringify({ success: false, error: 'Missing required fields' }),
+      };
+    }
+
+    // Validar tipos
+    if (typeof name !== 'string' || typeof email !== 'string' || typeof message !== 'string') {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Invalid field types' }),
+      };
+    }
+
+    // Validar longitudes máximas
+    if (name.length > MAX_LENGTHS.name || email.length > MAX_LENGTHS.email ||
+        message.length > MAX_LENGTHS.message || (subject && subject.length > MAX_LENGTHS.subject)) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Field exceeds maximum length' }),
+      };
+    }
+
+    // Validar formato de email
+    if (!isValidEmail(email)) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Invalid email format' }),
       };
     }
 
@@ -105,16 +214,16 @@ exports.handler = async (event) => {
             Email: email,
             Name: name,
           },
-          Subject: subject || `Nuevo mensaje de ${name} - Portafolio`,
+          Subject: subject ? sanitizeHtml(subject).substring(0, 200) : `Nuevo mensaje de ${sanitizeHtml(name)} - Portafolio`,
           TextPart: `Nuevo mensaje desde tu portafolio:\n\nNombre: ${name}\nEmail: ${email}\nAsunto: ${subject || 'Sin asunto'}\n\nMensaje:\n${message}`,
           HTMLPart: `
             <h2>Nuevo mensaje desde tu portafolio</h2>
-            <p><strong>Nombre:</strong> ${name}</p>
-            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-            <p><strong>Asunto:</strong> ${subject || 'Sin asunto'}</p>
+            <p><strong>Nombre:</strong> ${sanitizeHtml(name)}</p>
+            <p><strong>Email:</strong> <a href="mailto:${sanitizeHtml(email)}">${sanitizeHtml(email)}</a></p>
+            <p><strong>Asunto:</strong> ${sanitizeHtml(subject || 'Sin asunto')}</p>
             <hr>
             <p><strong>Mensaje:</strong></p>
-            <p>${message.replace(/\n/g, '<br>')}</p>
+            <p>${sanitizeHtml(message).replace(/\n/g, '<br>')}</p>
           `,
         },
       ],

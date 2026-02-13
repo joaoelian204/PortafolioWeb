@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TerminalComponent } from '../../shared/terminal/terminal.component';
 import { ActivityBarComponent } from '../activity-bar/activity-bar.component';
@@ -41,12 +41,40 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
           <app-sidebar />
           <main class="editor-area">
             <app-tabs-bar />
-            <div class="editor-content">
+            <div class="editor-content" #editorContent (scroll)="onScroll()">
               <router-outlet />
+            </div>
+
+            <!-- Minimap decorativo -->
+            <div class="minimap" [class.visible]="showMinimap()">
+              <div
+                class="minimap-viewport"
+                [style.top.%]="minimapViewportTop()"
+                [style.height.%]="minimapViewportHeight()"
+              ></div>
+              <div class="minimap-lines">
+                @for (block of minimapBlocks; track $index) {
+                  <div
+                    class="minimap-line"
+                    [style.width.%]="block.width"
+                    [style.background]="block.color"
+                    [style.opacity]="block.opacity"
+                  ></div>
+                }
+              </div>
             </div>
           </main>
         </div>
       </div>
+
+      <!-- Scroll to top -->
+      @if (showScrollTop()) {
+        <button class="scroll-to-top" (click)="scrollToTop()" [attr.aria-label]="'Scroll to top'">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 3.293l-4.354 4.354.708.707L8 4.707l3.646 3.647.708-.707L8 3.293z" />
+          </svg>
+        </button>
+      }
 
       <!-- Status Bar -->
       <app-status-bar />
@@ -138,6 +166,7 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        position: relative;
       }
 
       .editor-content {
@@ -145,7 +174,155 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
         overflow: auto;
         background-color: var(--vscode-editor-background, #1e1e1e);
       }
+
+      /* ── Minimap ── */
+      .minimap {
+        position: absolute;
+        top: 35px;
+        right: 0;
+        width: 50px;
+        bottom: 0;
+        background: var(--vscode-editor-background, #1e1e1e);
+        border-left: 1px solid var(--vscode-editorGroup-border, #2d2d2d);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 5;
+      }
+
+      .minimap.visible {
+        opacity: 1;
+      }
+
+      .minimap-viewport {
+        position: absolute;
+        left: 0;
+        right: 0;
+        background: rgba(121, 121, 121, 0.12);
+        border: 1px solid rgba(121, 121, 121, 0.2);
+        min-height: 20px;
+        z-index: 2;
+        transition:
+          top 0.1s ease-out,
+          height 0.1s ease-out;
+      }
+
+      .minimap-lines {
+        padding: 4px 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .minimap-line {
+        height: 2px;
+        border-radius: 1px;
+        min-width: 8px;
+      }
+
+      /* ── Scroll to top ── */
+      .scroll-to-top {
+        position: fixed;
+        bottom: 36px;
+        right: 24px;
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        border: 1px solid var(--vscode-editorGroup-border, #444);
+        background: var(--vscode-editor-background, #1e1e1e);
+        color: var(--vscode-editor-foreground, #d4d4d4);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        opacity: 0.7;
+        transition:
+          opacity 0.2s,
+          background 0.2s;
+        animation: fadeInUp 0.3s ease-out;
+      }
+
+      .scroll-to-top:hover {
+        opacity: 1;
+        background: var(--vscode-list-hoverBackground, #2a2d2e);
+      }
+
+      .scroll-to-top svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      @media (max-width: 768px) {
+        .minimap {
+          display: none;
+        }
+
+        .scroll-to-top {
+          right: 12px;
+          bottom: 30px;
+        }
+      }
     `,
   ],
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent {
+  @ViewChild('editorContent') editorContentRef!: ElementRef<HTMLElement>;
+
+  showScrollTop = signal(false);
+  showMinimap = signal(false);
+  minimapViewportTop = signal(0);
+  minimapViewportHeight = signal(20);
+
+  minimapBlocks = this.generateMinimapBlocks();
+
+  onScroll() {
+    const el = this.editorContentRef?.nativeElement;
+    if (!el) return;
+
+    const scrollTop = el.scrollTop;
+    const scrollHeight = el.scrollHeight;
+    const clientHeight = el.clientHeight;
+    const maxScroll = scrollHeight - clientHeight;
+
+    // Show scroll-to-top after 200px
+    this.showScrollTop.set(scrollTop > 200);
+
+    // Show minimap when content is scrollable
+    this.showMinimap.set(maxScroll > 100);
+
+    // Update minimap viewport position
+    if (maxScroll > 0) {
+      const viewportRatio = clientHeight / scrollHeight;
+      this.minimapViewportHeight.set(Math.max(10, viewportRatio * 100));
+      this.minimapViewportTop.set((scrollTop / scrollHeight) * 100);
+    }
+  }
+
+  scrollToTop() {
+    this.editorContentRef?.nativeElement?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private generateMinimapBlocks() {
+    const colors = [
+      '#569cd6',
+      '#4ec9b0',
+      '#ce9178',
+      '#6a9955',
+      '#dcdcaa',
+      '#9cdcfe',
+      '#c586c0',
+      '#d7ba7d',
+    ];
+    const blocks = [];
+    for (let i = 0; i < 60; i++) {
+      blocks.push({
+        width: Math.random() * 60 + 20,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        opacity: Math.random() * 0.4 + 0.15,
+      });
+    }
+    return blocks;
+  }
+}

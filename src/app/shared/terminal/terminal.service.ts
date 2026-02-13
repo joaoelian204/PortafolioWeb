@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { SupabaseService } from '../../core/services/supabase.service';
 import { BANNER, executeCommand, getAutocompleteSuggestions } from './terminal-commands';
 import { TerminalHistoryEntry, TerminalOutput, TerminalState } from './terminal.types';
 
@@ -20,17 +21,73 @@ export class TerminalService {
   history = signal<TerminalHistoryEntry[]>([]);
   currentPath = signal('~');
 
-  constructor(private router: Router) {
+  private dataLoaded = false;
+
+  constructor(
+    private router: Router,
+    private supabase: SupabaseService,
+  ) {
     // Agregar banner inicial al historial
     this.addToHistory('', { type: 'info', content: BANNER, isHtml: true });
   }
 
+  private async loadPortfolioData(): Promise<void> {
+    if (this.dataLoaded) return;
+    this.dataLoaded = true;
+
+    try {
+      const [profile, skills, projects, experiences] = await Promise.all([
+        this.supabase.getProfile(),
+        this.supabase.getSkills(),
+        this.supabase.getProjects(),
+        this.supabase.getExperiences(),
+      ]);
+
+      this.state.portfolioData = {
+        profile: profile
+          ? {
+              name: profile.name,
+              title: profile.title || '',
+              email: profile.email || '',
+              location: profile.location || '',
+              socialLinks: profile.social_links || {},
+            }
+          : null,
+        skills: (skills || []).map((s) => ({
+          label: s.label,
+          category: s.category,
+          proficiency: s.proficiency,
+        })),
+        projects: (projects || []).map((p) => ({
+          title: p.title,
+          description: p.description || '',
+          techStack: p.tech_stack || [],
+          liveLink: p.live_link,
+          repoLink: p.repo_link,
+        })),
+        experiences: (experiences || []).map((e) => ({
+          company: e.company,
+          position: e.position,
+          startDate: e.start_date,
+          endDate: e.end_date,
+          isCurrent: e.is_current,
+        })),
+      };
+    } catch (err) {
+      console.error('Terminal: Error loading portfolio data', err);
+    }
+  }
+
   toggle(): void {
     this.isOpen.update((v) => !v);
+    if (this.isOpen()) {
+      this.loadPortfolioData();
+    }
   }
 
   open(): void {
     this.isOpen.set(true);
+    this.loadPortfolioData();
   }
 
   close(): void {

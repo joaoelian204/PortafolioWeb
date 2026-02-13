@@ -14,7 +14,7 @@ import { Theme, ThemeService } from '../../core/services/theme.service';
       </div>
       <div class="code-content">
         <pre class="code"><span class="comment">// settings.json</span>
-<span class="comment">// {{ i18n.language() === 'es' ? 'Configuración del portafolio' : 'Portfolio settings' }}</span>
+<span class="comment">// {{ i18n.s('Configuración del portafolio', 'Portfolio settings') }}</span>
 
 <span class="punctuation">&#123;</span>
   <span class="property">"editor.theme"</span><span class="punctuation">:</span> <span class="string">"{{ themeService.theme() }}"</span><span class="punctuation">,</span>
@@ -36,7 +36,7 @@ import { Theme, ThemeService } from '../../core/services/theme.service';
                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
               ></path>
             </svg>
-            {{ i18n.language() === 'es' ? 'Configuración' : 'Settings' }}
+            {{ i18n.s('Configuración', 'Settings') }}
           </h3>
 
           <!-- Theme Setting -->
@@ -60,13 +60,11 @@ import { Theme, ThemeService } from '../../core/services/theme.service';
                   <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                   <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                 </svg>
-                {{ i18n.language() === 'es' ? 'Tema' : 'Theme' }}
+                {{ i18n.s('Tema', 'Theme') }}
               </span>
               <span class="setting-description">
                 {{
-                  i18n.language() === 'es'
-                    ? 'Cambia entre tema claro y oscuro'
-                    : 'Switch between light and dark theme'
+                  i18n.s('Cambia entre tema claro y oscuro', 'Switch between light and dark theme')
                 }}
               </span>
             </div>
@@ -125,14 +123,10 @@ import { Theme, ThemeService } from '../../core/services/theme.service';
                     d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
                   ></path>
                 </svg>
-                {{ i18n.language() === 'es' ? 'Idioma' : 'Language' }}
+                {{ i18n.s('Idioma', 'Language') }}
               </span>
               <span class="setting-description">
-                {{
-                  i18n.language() === 'es'
-                    ? 'Selecciona el idioma de la interfaz'
-                    : 'Select interface language'
-                }}
+                {{ i18n.s('Selecciona el idioma de la interfaz', 'Select interface language') }}
               </span>
             </div>
             <div class="setting-control">
