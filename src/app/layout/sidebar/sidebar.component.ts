@@ -18,7 +18,11 @@ interface SearchItem {
   standalone: true,
   imports: [FileExplorerComponent],
   template: `
-    <aside class="sidebar" [class.hidden]="!editorState.sidebarVisible()">
+    <aside
+      class="sidebar"
+      [class.hidden]="!editorState.sidebarVisible()"
+      [class.mobile-open]="editorState.mobileSidebarOpen()"
+    >
       @switch (editorState.activityBarSection()) {
         @case ('explorer') {
           <app-file-explorer />
@@ -561,6 +565,35 @@ interface SearchItem {
       @media (max-width: 480px) {
         .sidebar {
           display: none;
+          position: fixed;
+          top: 28px;
+          left: 36px;
+          bottom: 22px;
+          width: 260px;
+          min-width: 260px;
+          z-index: 100;
+          box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+          border-right: 1px solid var(--vscode-sideBar-border, #1e1e1e);
+        }
+
+        .sidebar.mobile-open {
+          display: flex;
+        }
+
+        .sidebar.hidden.mobile-open {
+          display: flex;
+          width: 260px;
+          min-width: 260px;
+          border-right: 1px solid var(--vscode-sideBar-border, #1e1e1e);
+        }
+
+        .section-header {
+          padding: 0 12px;
+          font-size: 10px;
+        }
+
+        .section-content {
+          padding: 6px 8px;
         }
       }
     `,
@@ -668,5 +701,6 @@ export class SidebarComponent {
       icon: item.icon,
     };
     this.editorState.openFile(fileNode);
+    // openFile ya cierra el mobile sidebar
   }
 }

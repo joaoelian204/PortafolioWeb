@@ -1,5 +1,5 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
 import { EditorTab, FileNode } from '../models/database.types';
 
@@ -15,6 +15,22 @@ export class EditorStateService {
   private _sidebarVisible = signal<boolean>(true);
   private _activityBarSection = signal<string>('explorer');
   private _initialized = false;
+
+  // Mobile sidebar overlay
+  private _mobileSidebarOpen = signal<boolean>(false);
+  mobileSidebarOpen = computed(() => this._mobileSidebarOpen());
+
+  toggleMobileSidebar(): void {
+    this._mobileSidebarOpen.update((v) => !v);
+  }
+
+  openMobileSidebar(): void {
+    this._mobileSidebarOpen.set(true);
+  }
+
+  closeMobileSidebar(): void {
+    this._mobileSidebarOpen.set(false);
+  }
 
   // Computed signals públicos
   tabs = computed(() => this._tabs());
@@ -102,7 +118,7 @@ export class EditorStateService {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        take(1)
+        take(1),
       )
       .subscribe(() => {
         if (!this._initialized) {
@@ -151,6 +167,7 @@ export class EditorStateService {
     }
 
     this.router.navigate([file.route]);
+    this.closeMobileSidebar();
   }
 
   // Activar una pestaña existente

@@ -1,6 +1,7 @@
 import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { ChildrenOutletContexts, RouterOutlet } from '@angular/router';
 import { routeTransitionAnimations } from '../../core/animations/route-animations';
+import { EditorStateService } from '../../core/services/editor-state.service';
 import { TerminalComponent } from '../../shared/terminal/terminal.component';
 import { ActivityBarComponent } from '../activity-bar/activity-bar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -81,6 +82,11 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
             <path d="M8 3.293l-4.354 4.354.708.707L8 4.707l3.646 3.647.708-.707L8 3.293z" />
           </svg>
         </button>
+      }
+
+      <!-- Mobile sidebar backdrop -->
+      @if (editorState.mobileSidebarOpen()) {
+        <div class="mobile-sidebar-backdrop" (click)="editorState.closeMobileSidebar()"></div>
       }
 
       <!-- Status Bar -->
@@ -331,12 +337,41 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
           margin-left: 36px;
         }
       }
+
+      /* Mobile sidebar backdrop */
+      .mobile-sidebar-backdrop {
+        display: none;
+      }
+
+      @media (max-width: 480px) {
+        .mobile-sidebar-backdrop {
+          display: block;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 99;
+          animation: fadeIn 0.2s ease;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
     `,
   ],
 })
 export class MainLayoutComponent {
   @ViewChild('editorContent') editorContentRef!: ElementRef<HTMLElement>;
   private contexts = inject(ChildrenOutletContexts);
+  editorState = inject(EditorStateService);
 
   getRouteAnimationData() {
     return this.contexts.getContext('primary')?.route?.snapshot?.url?.toString() || '';

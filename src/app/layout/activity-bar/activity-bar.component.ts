@@ -11,12 +11,30 @@ import { ThemeService } from '../../core/services/theme.service';
   standalone: true,
   template: `
     <aside class="activity-bar">
+      <!-- Botón hamburguesa para móvil -->
+      <button
+        class="mobile-menu-btn"
+        (click)="toggleMobileSidebar()"
+        [class.active]="editorState.mobileSidebarOpen()"
+        title="Menu"
+      >
+        <svg viewBox="0 0 16 16" fill="currentColor">
+          @if (editorState.mobileSidebarOpen()) {
+            <path
+              d="M8 8.707l3.646 3.647.708-.707L8.707 8l3.647-3.646-.707-.708L8 7.293 4.354 3.646l-.707.708L7.293 8l-3.646 3.646.707.708L8 8.707z"
+            />
+          } @else {
+            <path d="M2 3.5h12v1H2zm0 4h12v1H2zm0 4h12v1H2z" />
+          }
+        </svg>
+      </button>
+
       <!-- Iconos superiores -->
       <div class="activity-icons-top">
         <button
           class="activity-icon"
           [class.active]="editorState.activityBarSection() === 'explorer'"
-          (click)="editorState.setActivitySection('explorer')"
+          (click)="onActivityClick('explorer')"
           title="Explorer (Ctrl+Shift+E)"
         >
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -29,7 +47,7 @@ import { ThemeService } from '../../core/services/theme.service';
         <button
           class="activity-icon"
           [class.active]="editorState.activityBarSection() === 'search'"
-          (click)="editorState.setActivitySection('search')"
+          (click)="onActivityClick('search')"
           title="Search (Ctrl+Shift+F)"
         >
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -42,7 +60,7 @@ import { ThemeService } from '../../core/services/theme.service';
         <button
           class="activity-icon"
           [class.active]="editorState.activityBarSection() === 'git'"
-          (click)="editorState.setActivitySection('git')"
+          (click)="onActivityClick('git')"
           title="Source Control (Ctrl+Shift+G)"
         >
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -116,7 +134,7 @@ import { ThemeService } from '../../core/services/theme.service';
 
         <button
           class="activity-icon"
-          (click)="editorState.setActivitySection('settings')"
+          (click)="onActivityClick('settings')"
           [class.active]="editorState.activityBarSection() === 'settings'"
           title="Settings (Ctrl+,)"
         >
@@ -233,6 +251,31 @@ import { ThemeService } from '../../core/services/theme.service';
         color: var(--syntax-escape, #d7ba7d);
       }
 
+      /* Botón hamburguesa - oculto por defecto, visible en móvil */
+      .mobile-menu-btn {
+        display: none;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--vscode-activityBar-inactiveForeground, #858585);
+        transition: color 0.15s ease;
+        position: relative;
+      }
+
+      .mobile-menu-btn:hover,
+      .mobile-menu-btn.active {
+        color: var(--vscode-activityBar-foreground, #ffffff);
+      }
+
+      .mobile-menu-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
       @media (max-width: 768px) {
         .activity-bar {
           width: 40px;
@@ -256,6 +299,17 @@ import { ThemeService } from '../../core/services/theme.service';
       @media (max-width: 480px) {
         .activity-bar {
           width: 36px;
+        }
+
+        .mobile-menu-btn {
+          display: flex;
+          width: 36px;
+          height: 36px;
+        }
+
+        .mobile-menu-btn svg {
+          width: 18px;
+          height: 18px;
         }
 
         .activity-icon {
@@ -298,5 +352,18 @@ export class ActivityBarComponent {
 
   goToAdmin(): void {
     this.router.navigate(['/admin']);
+  }
+
+  /** En móvil, abre el sidebar overlay al clickear un icono de sección */
+  onActivityClick(section: string): void {
+    this.editorState.setActivitySection(section);
+    // Si estamos en móvil, abrir el overlay
+    if (window.innerWidth <= 480) {
+      this.editorState.openMobileSidebar();
+    }
+  }
+
+  toggleMobileSidebar(): void {
+    this.editorState.toggleMobileSidebar();
   }
 }
