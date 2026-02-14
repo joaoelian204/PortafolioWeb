@@ -146,13 +146,13 @@ import { I18nService } from '../../core/services/i18n.service';
         font-size: 13px;
         background: var(--vscode-tab-activeBackground, #1e1e1e);
         color: var(--vscode-tab-activeForeground, #fff);
-        border-top: 2px solid #f14c4c;
+        border-top: 2px solid var(--syntax-error, #f48771);
       }
 
       .tab-icon {
         width: 16px;
         height: 16px;
-        color: #f14c4c;
+        color: var(--syntax-error, #f48771);
       }
 
       .unsaved-dot {
@@ -185,7 +185,7 @@ import { I18nService } from '../../core/services/i18n.service';
       }
 
       .line-number.error-line {
-        color: #f14c4c;
+        color: var(--syntax-error, #f48771);
       }
 
       .line-number.error-line::after {
@@ -196,7 +196,7 @@ import { I18nService } from '../../core/services/i18n.service';
         transform: translateY(-50%);
         width: 0;
         height: 0;
-        border-left: 5px solid #f14c4c;
+        border-left: 5px solid var(--syntax-error, #f48771);
         border-top: 4px solid transparent;
         border-bottom: 4px solid transparent;
       }
@@ -214,37 +214,37 @@ import { I18nService } from '../../core/services/i18n.service';
       }
 
       .keyword {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
       }
       .type {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
       }
       .string {
-        color: #ce9178;
+        color: var(--syntax-string, #ce9178);
       }
       .number {
-        color: #b5cea8;
+        color: var(--syntax-number, #b5cea8);
       }
       .function {
-        color: #dcdcaa;
+        color: var(--syntax-function, #dcdcaa);
       }
       .variable {
-        color: #9cdcfe;
+        color: var(--syntax-variable, #9cdcfe);
       }
       .operator {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .punctuation {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .comment {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
       }
 
       .error-highlight {
         background: rgba(255, 0, 0, 0.15);
         display: inline;
-        border-left: 3px solid #f14c4c;
+        border-left: 3px solid var(--syntax-error, #f48771);
         padding-left: 4px;
         margin-left: -7px;
       }
@@ -273,7 +273,7 @@ import { I18nService } from '../../core/services/i18n.service';
       }
 
       .badge {
-        background: #f14c4c;
+        background: var(--syntax-error, #f48771);
         color: #fff;
         font-size: 10px;
         padding: 1px 6px;
@@ -297,7 +297,7 @@ import { I18nService } from '../../core/services/i18n.service';
       .error-icon {
         width: 14px;
         height: 14px;
-        color: #f14c4c;
+        color: var(--syntax-error, #f48771);
         flex-shrink: 0;
       }
 

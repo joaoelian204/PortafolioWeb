@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { EditorStateService } from '../../core/services/editor-state.service';
 import { I18nService } from '../../core/services/i18n.service';
-import { ThemeService } from '../../core/services/theme.service';
+import { THEMES, ThemeService } from '../../core/services/theme.service';
 import { FileExplorerComponent } from '../file-explorer/file-explorer.component';
 
 interface SearchItem {
@@ -161,21 +161,28 @@ interface SearchItem {
             <div class="section-content">
               <div class="setting-item">
                 <label class="setting-label">{{ i18n.s('Tema de Color', 'Color Theme') }}</label>
-                <div class="theme-toggle">
-                  <button
-                    class="theme-btn"
-                    [class.active]="themeService.theme() === 'dark'"
-                    (click)="themeService.setTheme('dark')"
-                  >
-                    {{ i18n.s('Oscuro+', 'Dark+') }}
-                  </button>
-                  <button
-                    class="theme-btn"
-                    [class.active]="themeService.theme() === 'light'"
-                    (click)="themeService.setTheme('light')"
-                  >
-                    {{ i18n.s('Claro+', 'Light+') }}
-                  </button>
+                <div class="theme-list">
+                  @for (theme of themes; track theme.id) {
+                    <button
+                      class="theme-option"
+                      [class.active]="themeService.theme() === theme.id"
+                      (click)="themeService.setTheme(theme.id)"
+                    >
+                      <span class="theme-dot" [attr.data-theme-dot]="theme.id"></span>
+                      {{ i18n.s(theme.nameEs, theme.name) }}
+                      @if (themeService.theme() === theme.id) {
+                        <svg
+                          class="check-icon"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          width="12"
+                          height="12"
+                        >
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                      }
+                    </button>
+                  }
                 </div>
               </div>
               <div class="setting-item">
@@ -461,6 +468,101 @@ interface SearchItem {
       .theme-btn.active:hover {
         background-color: var(--vscode-button-hoverBackground, #1177bb);
       }
+
+      .theme-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .theme-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        background: transparent;
+        border: none;
+        color: var(--vscode-sideBar-foreground, #cccccc);
+        font-size: 12px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: background-color 0.1s ease;
+        text-align: left;
+        width: 100%;
+      }
+
+      .theme-option:hover {
+        background-color: var(--vscode-list-hoverBackground, #2a2d2e);
+      }
+
+      .theme-option.active {
+        background-color: var(--vscode-list-activeSelectionBackground, #094771);
+        color: var(--vscode-list-activeSelectionForeground, #ffffff);
+      }
+
+      .theme-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      [data-theme-dot='dark'] {
+        background: #1e1e1e;
+        border: 1px solid #555;
+      }
+      [data-theme-dot='light'] {
+        background: #ffffff;
+        border: 1px solid #ccc;
+      }
+      [data-theme-dot='monokai'] {
+        background: #272822;
+        border: 1px solid #555;
+      }
+      [data-theme-dot='github-dark'] {
+        background: #0d1117;
+        border: 1px solid #555;
+      }
+      [data-theme-dot='dracula'] {
+        background: #282a36;
+        border: 1px solid #555;
+      }
+      [data-theme-dot='nord'] {
+        background: #2e3440;
+        border: 1px solid #555;
+      }
+      [data-theme-dot='solarized-dark'] {
+        background: #002b36;
+        border: 1px solid #555;
+      }
+
+      .check-icon {
+        width: 12px;
+        height: 12px;
+        margin-left: auto;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 180px;
+          min-width: 180px;
+        }
+
+        .section-header {
+          padding: 0 12px;
+          font-size: 10px;
+        }
+
+        .section-content {
+          padding: 6px 8px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .sidebar {
+          display: none;
+        }
+      }
     `,
   ],
 })
@@ -468,6 +570,8 @@ export class SidebarComponent {
   editorState = inject(EditorStateService);
   themeService = inject(ThemeService);
   i18n = inject(I18nService);
+
+  themes = THEMES;
 
   // Search functionality
   searchTerm = signal('');

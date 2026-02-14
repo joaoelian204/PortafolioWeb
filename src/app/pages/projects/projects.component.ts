@@ -1,4 +1,6 @@
-import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, effect, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { fadeInUp, staggerList } from '../../core/animations/content-animations';
 import { Project } from '../../core/models/database.types';
 import { TranslatePipe } from '../../core/pipes/translate.pipe';
 import { I18nService } from '../../core/services/i18n.service';
@@ -8,8 +10,9 @@ import { SupabaseService } from '../../core/services/supabase.service';
   selector: 'app-projects',
   standalone: true,
   imports: [TranslatePipe],
+  animations: [fadeInUp, staggerList],
   template: `
-    <div class="code-editor">
+    <div class="code-editor" @fadeInUp>
       @if (projects().length > 0) {
         <div class="line-numbers">
           @for (line of lineNumbers(); track line) {
@@ -35,9 +38,9 @@ import { SupabaseService } from '../../core/services/supabase.service';
             </p>
           </div>
         } @else {
-          <div class="projects-container">
+          <div class="projects-container" @staggerList>
             @for (project of projects(); track project.id) {
-              <div class="project-card" [class.featured-card]="project.is_featured">
+              <div class="project-card stagger-item" [class.featured-card]="project.is_featured">
                 <!-- Header con título -->
                 <div class="project-header-bar">
                   <div class="header-left">
@@ -319,31 +322,31 @@ import { SupabaseService } from '../../core/services/supabase.service';
       }
 
       .property {
-        color: #9cdcfe;
+        color: var(--syntax-variable, #9cdcfe);
       }
       .string {
-        color: #ce9178;
+        color: var(--syntax-string, #ce9178);
       }
       .number {
-        color: #b5cea8;
+        color: var(--syntax-number, #b5cea8);
       }
       .keyword {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
       }
       .punctuation {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .comment {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
       }
       .code-inline {
-        color: #dcdcaa;
-        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--syntax-function, #dcdcaa);
+        background-color: var(--code-inline-bg, rgba(255, 255, 255, 0.1));
         padding: 2px 6px;
         border-radius: 3px;
       }
       .link {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
         text-decoration: underline;
         cursor: pointer;
       }
@@ -399,6 +402,47 @@ import { SupabaseService } from '../../core/services/supabase.service';
         .projects-container {
           padding: 12px;
           gap: 12px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .code-editor {
+          font-size: 13px;
+        }
+
+        .line-numbers {
+          min-width: 35px;
+          padding-right: 8px;
+        }
+
+        .line-number {
+          padding: 0 4px;
+        }
+
+        .code-content {
+          padding: 12px 16px;
+        }
+
+        .project-card {
+          width: 280px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .code-editor {
+          font-size: 12px;
+        }
+
+        .line-numbers {
+          display: none;
+        }
+
+        .code-content {
+          padding: 10px;
+        }
+
+        .project-card {
+          width: 100%;
         }
       }
 
@@ -957,6 +1001,18 @@ import { SupabaseService } from '../../core/services/supabase.service';
           right: 10px;
         }
       }
+
+      @media (max-width: 480px) {
+        .lightbox-nav {
+          width: 32px;
+          height: 32px;
+        }
+
+        .lightbox-nav svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
     `,
   ],
 })
@@ -1059,17 +1115,23 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     img.style.objectFit = 'contain';
   }
 
+  private platformId = inject(PLATFORM_ID);
+
   // Lightbox methods
   openLightbox(images: string[], index: number): void {
     this.lightboxImages.set(images);
     this.lightboxCurrentIndex.set(index);
     this.lightboxOpen.set(true);
-    document.body.style.overflow = 'hidden';
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = 'hidden';
+    }
   }
 
   closeLightbox(): void {
     this.lightboxOpen.set(false);
-    document.body.style.overflow = '';
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = '';
+    }
   }
 
   lightboxPrev(): void {

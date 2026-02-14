@@ -1,9 +1,10 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
+  PLATFORM_ID,
   ViewChild,
   effect,
   inject,
@@ -155,7 +156,7 @@ import { TerminalService } from './terminal.service';
         max-width: 900px;
         height: 60vh;
         max-height: 500px;
-        background-color: #1e1e1e;
+        background-color: var(--terminal-background, #1e1e1e);
         border-radius: 8px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         display: flex;
@@ -179,10 +180,10 @@ import { TerminalService } from './terminal.service';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #2d2d2d;
+        background-color: var(--terminal-header, #2d2d2d);
         padding: 0 8px;
         height: 35px;
-        border-bottom: 1px solid #3c3c3c;
+        border-bottom: 1px solid var(--terminal-border, #3c3c3c);
       }
 
       .terminal-tabs {
@@ -196,8 +197,8 @@ import { TerminalService } from './terminal.service';
         gap: 6px;
         padding: 6px 12px;
         font-size: 12px;
-        color: #cccccc;
-        background-color: #1e1e1e;
+        color: var(--terminal-foreground, #cccccc);
+        background-color: var(--terminal-background, #1e1e1e);
         border-radius: 4px 4px 0 0;
         margin-top: 4px;
       }
@@ -222,17 +223,17 @@ import { TerminalService } from './terminal.service';
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #858585;
+        color: var(--vscode-descriptionForeground, #858585);
         transition: all 0.15s ease;
       }
 
       .terminal-btn:hover {
-        background-color: #3c3c3c;
-        color: #cccccc;
+        background-color: var(--terminal-border, #3c3c3c);
+        color: var(--terminal-foreground, #cccccc);
       }
 
       .terminal-btn.close:hover {
-        background-color: #f14c4c;
+        background-color: var(--syntax-error, #f14c4c);
         color: white;
       }
 
@@ -256,11 +257,11 @@ import { TerminalService } from './terminal.service';
       }
 
       .terminal-body::-webkit-scrollbar-track {
-        background: #1e1e1e;
+        background: var(--terminal-background, #1e1e1e);
       }
 
       .terminal-body::-webkit-scrollbar-thumb {
-        background-color: #424242;
+        background-color: var(--terminal-scrollbar, #424242);
         border-radius: 5px;
       }
 
@@ -282,106 +283,106 @@ import { TerminalService } from './terminal.service';
       }
 
       .user {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
       }
       .at {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .host {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
       }
       .colon {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .path {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
       }
       .dollar {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
         margin-left: 4px;
       }
 
       .command {
-        color: #dcdcaa;
+        color: var(--syntax-function, #dcdcaa);
       }
 
       .output {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
         white-space: pre-wrap;
         word-break: break-word;
         padding: 4px 0;
       }
 
       .output.error {
-        color: #f14c4c;
+        color: var(--syntax-error, #f48771);
       }
 
       .output.warning {
-        color: #cca700;
+        color: var(--syntax-warning, #cca700);
       }
 
       .output.info {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
 
       /* Estilos para HTML dentro del output */
       :host ::ng-deep .directory {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
         font-weight: 500;
       }
 
       :host ::ng-deep .file {
-        color: #9cdcfe;
+        color: var(--syntax-variable, #9cdcfe);
       }
 
       :host ::ng-deep .cmd-name {
-        color: #dcdcaa;
+        color: var(--syntax-function, #dcdcaa);
         font-weight: 500;
       }
 
       :host ::ng-deep .highlight {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
       }
 
       :host ::ng-deep .label {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
       }
 
       :host ::ng-deep .ascii-art {
-        color: #4fc1ff;
+        color: var(--syntax-constant, #4fc1ff);
         display: block;
       }
 
       :host ::ng-deep .ascii-small {
-        color: #4fc1ff;
+        color: var(--syntax-constant, #4fc1ff);
       }
 
       :host ::ng-deep .welcome-text {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
         font-weight: 500;
         display: block;
         margin-top: 8px;
       }
 
       :host ::ng-deep .hint-text {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
         display: block;
         margin-top: 4px;
       }
 
       :host ::ng-deep .section-title {
-        color: #c586c0;
+        color: var(--syntax-decorator, #dcdcaa);
         font-weight: 600;
         display: block;
         margin-top: 8px;
       }
 
       :host ::ng-deep .success {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
       }
 
       :host ::ng-deep .warning {
-        color: #ce9178;
+        color: var(--syntax-string, #ce9178);
       }
 
       :host ::ng-deep .matrix {
@@ -401,11 +402,11 @@ import { TerminalService } from './terminal.service';
         flex: 1;
         background: transparent;
         border: none;
-        color: #dcdcaa;
+        color: var(--syntax-function, #dcdcaa);
         font-family: inherit;
         font-size: inherit;
         outline: none;
-        caret-color: #aeafad;
+        caret-color: var(--terminal-cursor, #aeafad);
         min-width: 100px;
       }
 
@@ -418,7 +419,7 @@ import { TerminalService } from './terminal.service';
       }
 
       .suggestion {
-        color: #9cdcfe;
+        color: var(--syntax-variable, #9cdcfe);
         cursor: pointer;
         padding: 2px 6px;
         border-radius: 3px;
@@ -426,11 +427,11 @@ import { TerminalService } from './terminal.service';
       }
 
       .suggestion:hover {
-        background-color: #3c3c3c;
+        background-color: var(--terminal-border, #3c3c3c);
       }
 
       .suggestion.directory {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
       }
 
       @media (max-width: 600px) {
@@ -493,12 +494,18 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private platformId = inject(PLATFORM_ID);
+
   ngAfterViewInit(): void {
-    document.addEventListener('keydown', this.keydownHandler);
+    if (isPlatformBrowser(this.platformId)) {
+      document.addEventListener('keydown', this.keydownHandler);
+    }
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('keydown', this.keydownHandler);
+    if (isPlatformBrowser(this.platformId)) {
+      document.removeEventListener('keydown', this.keydownHandler);
+    }
   }
 
   focusInput(): void {

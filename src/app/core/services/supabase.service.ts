@@ -1,4 +1,5 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import {
   AuthChangeEvent,
   createClient,
@@ -28,6 +29,7 @@ import {
 export class SupabaseService {
   private supabase: SupabaseClient | null = null;
   private _isConfigured = false;
+  private platformId = inject(PLATFORM_ID);
 
   // Signals para estado de autenticación
   private _currentUser = signal<User | null>(null);
@@ -41,6 +43,12 @@ export class SupabaseService {
   isLoading = computed(() => this._isLoading());
 
   constructor() {
+    // No inicializar Supabase en el servidor (SSR/SSG)
+    if (!isPlatformBrowser(this.platformId)) {
+      this._isLoading.set(false);
+      return;
+    }
+
     // Verificar si Supabase está configurado
     if (
       environment.supabase.url &&

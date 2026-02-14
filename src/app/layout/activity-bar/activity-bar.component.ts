@@ -205,32 +205,76 @@ import { ThemeService } from '../../core/services/theme.service';
       }
 
       .route-dot.home {
-        background: #6a9955;
-        color: #6a9955;
+        background: var(--syntax-comment, #6a9955);
+        color: var(--syntax-comment, #6a9955);
       }
       .route-dot.about {
-        background: #569cd6;
-        color: #569cd6;
+        background: var(--syntax-keyword, #569cd6);
+        color: var(--syntax-keyword, #569cd6);
       }
       .route-dot.skills {
-        background: #4ec9b0;
-        color: #4ec9b0;
+        background: var(--syntax-type, #4ec9b0);
+        color: var(--syntax-type, #4ec9b0);
       }
       .route-dot.projects {
-        background: #dcdcaa;
-        color: #dcdcaa;
+        background: var(--syntax-function, #dcdcaa);
+        color: var(--syntax-function, #dcdcaa);
       }
       .route-dot.experience {
-        background: #ce9178;
-        color: #ce9178;
+        background: var(--syntax-string, #ce9178);
+        color: var(--syntax-string, #ce9178);
       }
       .route-dot.contact {
-        background: #c586c0;
-        color: #c586c0;
+        background: var(--syntax-decorator, #dcdcaa);
+        color: var(--syntax-decorator, #dcdcaa);
       }
       .route-dot.settings {
-        background: #d7ba7d;
-        color: #d7ba7d;
+        background: var(--syntax-escape, #d7ba7d);
+        color: var(--syntax-escape, #d7ba7d);
+      }
+
+      @media (max-width: 768px) {
+        .activity-bar {
+          width: 40px;
+        }
+
+        .activity-icon {
+          width: 40px;
+          height: 40px;
+        }
+
+        .activity-icon svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        .activity-icon span {
+          font-size: 14px !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .activity-bar {
+          width: 36px;
+        }
+
+        .activity-icon {
+          width: 36px;
+          height: 36px;
+        }
+
+        .activity-icon svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        .activity-icon span {
+          font-size: 12px !important;
+        }
+
+        .route-indicator {
+          display: none;
+        }
       }
     `,
   ],

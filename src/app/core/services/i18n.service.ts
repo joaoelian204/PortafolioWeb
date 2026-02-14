@@ -41,9 +41,11 @@ export class I18nService {
   }
 
   private getInitialLanguage(): Language {
-    const saved = localStorage.getItem('portfolio-language');
-    if (saved === 'es' || saved === 'en') {
-      return saved;
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('portfolio-language');
+      if (saved === 'es' || saved === 'en') {
+        return saved;
+      }
     }
 
     if (typeof navigator !== 'undefined' && navigator.language) {

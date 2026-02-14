@@ -3,6 +3,38 @@
   publish = "dist/portafolio/browser"
   functions = "netlify/functions"
 
+# Pre-rendered pages served directly
+[[redirects]]
+  from = "/about"
+  to = "/about/index.html"
+  status = 200
+  conditions = {Language = ["en"]}
+  force = false
+
+[[redirects]]
+  from = "/skills"
+  to = "/skills/index.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/projects"
+  to = "/projects/index.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/experience"
+  to = "/experience/index.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact/index.html"
+  status = 200
+  force = false
+
 [functions]
   node_bundler = "esbuild"
 

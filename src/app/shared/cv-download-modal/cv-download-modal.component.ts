@@ -250,12 +250,12 @@ import { I18nService } from '../../core/services/i18n.service';
 
       .verified-state {
         background-color: rgba(78, 201, 176, 0.1);
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
       }
 
       .error-state {
         background-color: rgba(244, 135, 113, 0.1);
-        color: #f48771;
+        color: var(--syntax-error, #f48771);
       }
 
       .spinner {

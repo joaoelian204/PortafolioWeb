@@ -1,25 +1,14 @@
 import { provideHttpClient } from '@angular/common/http';
-import {
-  ApplicationConfig,
-  importProvidersFrom,
-  provideBrowserGlobalErrorListeners,
-} from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { NgHcaptchaModule } from 'ng-hcaptcha';
-import { environment } from '../environments/environment';
+import { ApplicationConfig } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
 
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(),
-    importProvidersFrom(
-      NgHcaptchaModule.forRoot({
-        siteKey: environment.hcaptcha.siteKey,
-        languageCode: 'es',
-      }),
-    ),
+    provideAnimations(),
   ],
 };

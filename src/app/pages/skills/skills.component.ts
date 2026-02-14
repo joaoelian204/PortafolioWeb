@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { fadeInUp, staggerList } from '../../core/animations/content-animations';
 import { Skill } from '../../core/models/database.types';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
@@ -7,8 +8,9 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
 @Component({
   selector: 'app-skills',
   standalone: true,
+  animations: [fadeInUp, staggerList],
   template: `
-    <div class="skills-page">
+    <div class="skills-page" @fadeInUp>
       <div class="skills-header">
         <h1 class="page-title">{{ i18n.s('skills.ts', 'skills.ts') }}</h1>
         <p class="page-subtitle">
@@ -56,9 +58,9 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   {{ i18n.s('Lenguajes de Programación', 'Programming Languages') }}
                 </h2>
               </div>
-              <div class="skills-grid">
+              <div class="skills-grid" @staggerList>
                 @for (skill of languageSkills(); track skill.id) {
-                  <div class="skill-card" [class.featured]="skill.is_featured">
+                  <div class="skill-card stagger-item" [class.featured]="skill.is_featured">
                     @if (getSkillIcon(skill.label)) {
                       <img
                         class="skill-icon-img"
@@ -108,9 +110,9 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   {{ i18n.s('Frameworks y Librerías', 'Frameworks & Libraries') }}
                 </h2>
               </div>
-              <div class="skills-grid">
+              <div class="skills-grid" @staggerList>
                 @for (skill of frameworkSkills(); track skill.id) {
-                  <div class="skill-card" [class.featured]="skill.is_featured">
+                  <div class="skill-card stagger-item" [class.featured]="skill.is_featured">
                     @if (getSkillIcon(skill.label)) {
                       <img
                         class="skill-icon-img"
@@ -161,9 +163,9 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   {{ i18n.s('Bases de Datos', 'Databases') }}
                 </h2>
               </div>
-              <div class="skills-grid">
+              <div class="skills-grid" @staggerList>
                 @for (skill of databaseSkills(); track skill.id) {
-                  <div class="skill-card" [class.featured]="skill.is_featured">
+                  <div class="skill-card stagger-item" [class.featured]="skill.is_featured">
                     @if (getSkillIcon(skill.label)) {
                       <img
                         class="skill-icon-img"
@@ -214,9 +216,9 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
                   {{ i18n.s('Herramientas y DevOps', 'Tools & DevOps') }}
                 </h2>
               </div>
-              <div class="skills-grid">
+              <div class="skills-grid" @staggerList>
                 @for (skill of toolSkills(); track skill.id) {
-                  <div class="skill-card" [class.featured]="skill.is_featured">
+                  <div class="skill-card stagger-item" [class.featured]="skill.is_featured">
                     @if (getSkillIcon(skill.label)) {
                       <img
                         class="skill-icon-img"
@@ -465,6 +467,44 @@ import { TechIconsService } from '../../core/services/tech-icons.service';
         .summary-card {
           width: 100%;
           max-width: 200px;
+        }
+
+        .skills-container {
+          gap: 20px;
+        }
+
+        .page-title {
+          font-size: 1.6rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .skills-page {
+          padding: 12px;
+        }
+
+        .page-title {
+          font-size: 1.3rem;
+        }
+
+        .page-subtitle {
+          font-size: 0.85rem;
+        }
+
+        .skill-section {
+          padding: 14px;
+        }
+
+        .skills-container {
+          gap: 14px;
+        }
+
+        .summary-card {
+          padding: 12px 20px;
+        }
+
+        .skill-card {
+          padding: 8px 12px;
         }
       }
     `,

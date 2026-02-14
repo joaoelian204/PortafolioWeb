@@ -147,6 +147,7 @@ export class TranslationService {
   }
 
   private loadCache(): void {
+    if (typeof localStorage === 'undefined') return;
     try {
       const raw = localStorage.getItem(CACHE_KEY);
       if (!raw) return;
@@ -166,6 +167,7 @@ export class TranslationService {
   }
 
   private saveCache(): void {
+    if (typeof localStorage === 'undefined') return;
     try {
       const toStore: Record<string, CacheEntry> = {};
       const now = Date.now();

@@ -1,4 +1,5 @@
 import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { slideInCode } from '../../core/animations/content-animations';
 import { ProfileInfo } from '../../core/models/database.types';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
@@ -6,8 +7,9 @@ import { SupabaseService } from '../../core/services/supabase.service';
 @Component({
   selector: 'app-home',
   standalone: true,
+  animations: [slideInCode],
   template: `
-    <div class="code-editor">
+    <div class="code-editor" @slideInCode>
       <div class="line-numbers">
         @for (line of lineNumbers(); track line) {
           <span class="line-number">{{ line }}</span>
@@ -85,41 +87,41 @@ import { SupabaseService } from '../../core/services/supabase.service';
       }
 
       .comment {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
       }
 
       .heading {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
         font-weight: bold;
       }
 
       .text {
-        color: #d4d4d4;
+        color: var(--vscode-editor-foreground, #d4d4d4);
       }
 
       .list {
-        color: #d4d4d4;
+        color: var(--vscode-editor-foreground, #d4d4d4);
       }
 
       .link {
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
         text-decoration: underline;
         cursor: pointer;
       }
 
       .file {
-        color: #ce9178;
+        color: var(--syntax-string, #ce9178);
       }
 
       .code-inline {
-        color: #dcdcaa;
-        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--syntax-function, #dcdcaa);
+        background-color: var(--code-inline-bg, rgba(255, 255, 255, 0.1));
         padding: 2px 6px;
         border-radius: 3px;
       }
 
       .punctuation {
-        color: #808080;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
 
       /* Typewriter effect */
@@ -143,6 +145,40 @@ import { SupabaseService } from '../../core/services/supabase.service';
         }
         50% {
           opacity: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .code-editor {
+          font-size: 13px;
+        }
+
+        .line-numbers {
+          min-width: 35px;
+          padding-right: 8px;
+        }
+
+        .line-number {
+          padding: 0 4px;
+        }
+
+        .code-content {
+          padding: 12px 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .code-editor {
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .line-numbers {
+          display: none;
+        }
+
+        .code-content {
+          padding: 12px;
         }
       }
     `,

@@ -1,5 +1,6 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { ChildrenOutletContexts, RouterOutlet } from '@angular/router';
+import { routeTransitionAnimations } from '../../core/animations/route-animations';
 import { TerminalComponent } from '../../shared/terminal/terminal.component';
 import { ActivityBarComponent } from '../activity-bar/activity-bar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -17,6 +18,7 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
     StatusBarComponent,
     TerminalComponent,
   ],
+  animations: [routeTransitionAnimations],
   template: `
     <div class="vscode-layout">
       <!-- Title Bar -->
@@ -41,7 +43,12 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
           <app-sidebar />
           <main class="editor-area">
             <app-tabs-bar />
-            <div class="editor-content" #editorContent (scroll)="onScroll()">
+            <div
+              class="editor-content"
+              #editorContent
+              (scroll)="onScroll()"
+              [@routeAnimations]="getRouteAnimationData()"
+            >
               <router-outlet />
             </div>
 
@@ -56,8 +63,8 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
                 @for (block of minimapBlocks; track $index) {
                   <div
                     class="minimap-line"
+                    [class]="'minimap-line minimap-color-' + block.colorIndex"
                     [style.width.%]="block.width"
-                    [style.background]="block.color"
                     [style.opacity]="block.opacity"
                   ></div>
                 }
@@ -173,6 +180,12 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
         flex: 1;
         overflow: auto;
         background-color: var(--vscode-editor-background, #1e1e1e);
+        position: relative;
+      }
+
+      /* Ocultar desborde durante la animación de transición */
+      .editor-content.ng-animating {
+        overflow: hidden;
       }
 
       /* ── Minimap ── */
@@ -221,6 +234,31 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
         min-width: 8px;
       }
 
+      .minimap-color-0 {
+        background: var(--syntax-keyword, #569cd6);
+      }
+      .minimap-color-1 {
+        background: var(--syntax-type, #4ec9b0);
+      }
+      .minimap-color-2 {
+        background: var(--syntax-string, #ce9178);
+      }
+      .minimap-color-3 {
+        background: var(--syntax-comment, #6a9955);
+      }
+      .minimap-color-4 {
+        background: var(--syntax-function, #dcdcaa);
+      }
+      .minimap-color-5 {
+        background: var(--syntax-variable, #9cdcfe);
+      }
+      .minimap-color-6 {
+        background: var(--syntax-decorator, #dcdcaa);
+      }
+      .minimap-color-7 {
+        background: var(--syntax-escape, #d7ba7d);
+      }
+
       /* ── Scroll to top ── */
       .scroll-to-top {
         position: fixed;
@@ -263,12 +301,46 @@ import { TabsBarComponent } from '../tabs-bar/tabs-bar.component';
           right: 12px;
           bottom: 30px;
         }
+
+        .title-bar {
+          height: 28px;
+          padding: 0 8px;
+        }
+
+        .title {
+          font-size: 11px;
+        }
+
+        .window-controls.macos .control {
+          width: 10px;
+          height: 10px;
+        }
+
+        .content-wrapper {
+          margin-left: 40px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .title-bar-left,
+        .title-bar-right {
+          width: 50px;
+        }
+
+        .content-wrapper {
+          margin-left: 36px;
+        }
       }
     `,
   ],
 })
 export class MainLayoutComponent {
   @ViewChild('editorContent') editorContentRef!: ElementRef<HTMLElement>;
+  private contexts = inject(ChildrenOutletContexts);
+
+  getRouteAnimationData() {
+    return this.contexts.getContext('primary')?.route?.snapshot?.url?.toString() || '';
+  }
 
   showScrollTop = signal(false);
   showMinimap = signal(false);
@@ -305,21 +377,11 @@ export class MainLayoutComponent {
   }
 
   private generateMinimapBlocks() {
-    const colors = [
-      '#569cd6',
-      '#4ec9b0',
-      '#ce9178',
-      '#6a9955',
-      '#dcdcaa',
-      '#9cdcfe',
-      '#c586c0',
-      '#d7ba7d',
-    ];
     const blocks = [];
     for (let i = 0; i < 60; i++) {
       blocks.push({
         width: Math.random() * 60 + 20,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        colorIndex: Math.floor(Math.random() * 8),
         opacity: Math.random() * 0.4 + 0.15,
       });
     }

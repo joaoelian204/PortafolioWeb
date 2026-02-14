@@ -266,11 +266,11 @@ import { I18nService } from '../../core/services/i18n.service';
       }
 
       .folder-icon {
-        color: #dcb67a;
+        color: var(--folder-icon);
       }
 
       .folder-icon.open {
-        color: #dcb67a;
+        color: var(--folder-icon);
       }
 
       .node-name {

@@ -1,6 +1,16 @@
-import { AfterViewInit, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { fadeInUp, staggerList } from '../../core/animations/content-animations';
 import { ProfileInfo } from '../../core/models/database.types';
 import { I18nService } from '../../core/services/i18n.service';
 import { SupabaseService } from '../../core/services/supabase.service';
@@ -11,8 +21,9 @@ declare const hcaptcha: any;
   selector: 'app-contact',
   standalone: true,
   imports: [ReactiveFormsModule],
+  animations: [fadeInUp, staggerList],
   template: `
-    <div class="contact-page">
+    <div class="contact-page" @fadeInUp>
       <div class="line-numbers">
         @for (line of lineNumbers; track line) {
           <span class="line-number">{{ line }}</span>
@@ -48,9 +59,9 @@ declare const hcaptcha: any;
           </p>
         </div>
 
-        <div class="contact-grid">
+        <div class="contact-grid" @staggerList>
           <!-- Left: Contact Form -->
-          <div class="form-section">
+          <div class="form-section stagger-item">
             <div class="section-header">
               <span class="keyword">const</span>
               <span class="function"> ContactForm</span>
@@ -194,7 +205,7 @@ declare const hcaptcha: any;
           </div>
 
           <!-- Right: Social Links & Info -->
-          <div class="info-section">
+          <div class="info-section stagger-item">
             <div class="info-card">
               <h3 class="info-title">
                 <span class="comment">// </span>
@@ -321,7 +332,7 @@ declare const hcaptcha: any;
       }
 
       .page-header .comment {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
         font-size: 12px;
       }
 
@@ -338,7 +349,7 @@ declare const hcaptcha: any;
       .page-title .title-icon {
         width: 28px;
         height: 28px;
-        stroke: #dcdcaa;
+        stroke: var(--syntax-function, #dcdcaa);
       }
 
       .page-subtitle {
@@ -361,6 +372,70 @@ declare const hcaptcha: any;
         }
       }
 
+      @media (max-width: 768px) {
+        .contact-page {
+          font-size: 13px;
+        }
+
+        .line-numbers {
+          min-width: 35px;
+          padding-right: 8px;
+        }
+
+        .line-number {
+          padding: 0 4px;
+        }
+
+        .contact-content {
+          padding: 16px;
+        }
+
+        .page-title {
+          font-size: 22px;
+        }
+
+        .contact-grid {
+          gap: 20px;
+        }
+
+        .social-link {
+          width: 44px;
+          height: 44px;
+        }
+
+        .social-link svg {
+          width: 22px;
+          height: 22px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .line-numbers {
+          display: none;
+        }
+
+        .contact-content {
+          padding: 12px;
+        }
+
+        .page-title {
+          font-size: 18px;
+        }
+
+        .page-description {
+          font-size: 12px;
+        }
+
+        .form-section {
+          padding: 14px;
+        }
+
+        .social-link {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
       /* Form Section */
       .form-section {
         background-color: var(--vscode-sideBar-background, #252526);
@@ -380,19 +455,19 @@ declare const hcaptcha: any;
       }
 
       .keyword {
-        color: #569cd6;
+        color: var(--syntax-keyword, #569cd6);
       }
       .function {
-        color: #dcdcaa;
+        color: var(--syntax-function, #dcdcaa);
       }
       .operator {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .punctuation {
-        color: #d4d4d4;
+        color: var(--syntax-punctuation, #d4d4d4);
       }
       .comment {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
       }
 
       .form {
@@ -408,7 +483,7 @@ declare const hcaptcha: any;
       }
 
       .label-text {
-        color: #6a9955;
+        color: var(--syntax-comment, #6a9955);
         font-size: 12px;
       }
 
@@ -438,7 +513,7 @@ declare const hcaptcha: any;
       }
 
       .error {
-        color: #f48771;
+        color: var(--syntax-error, #f48771);
         font-size: 11px;
       }
 
@@ -498,9 +573,9 @@ declare const hcaptcha: any;
         gap: 8px;
         padding: 12px;
         background-color: rgba(78, 201, 176, 0.1);
-        border: 1px solid #4ec9b0;
+        border: 1px solid var(--syntax-type, #4ec9b0);
         border-radius: 4px;
-        color: #4ec9b0;
+        color: var(--syntax-type, #4ec9b0);
         font-size: 13px;
       }
 
@@ -516,9 +591,9 @@ declare const hcaptcha: any;
         gap: 8px;
         padding: 12px;
         background-color: rgba(244, 135, 113, 0.1);
-        border: 1px solid #f48771;
+        border: 1px solid var(--syntax-error, #f48771);
         border-radius: 4px;
-        color: #f48771;
+        color: var(--syntax-error, #f48771);
         font-size: 13px;
       }
 
@@ -594,10 +669,10 @@ declare const hcaptcha: any;
       }
 
       .social-link.github {
-        color: #f0f0f0;
+        color: var(--vscode-editor-foreground, #f0f0f0);
       }
       .social-link.github:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: var(--vscode-button-secondaryHoverBackground, rgba(255, 255, 255, 0.1));
       }
 
       .social-link.linkedin {
@@ -638,7 +713,7 @@ declare const hcaptcha: any;
       .response-icon svg {
         width: 28px;
         height: 28px;
-        stroke: #dcdcaa;
+        stroke: var(--syntax-function, #dcdcaa);
       }
 
       .response-text {
@@ -663,6 +738,7 @@ declare const hcaptcha: any;
 export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
   private fb = inject(FormBuilder);
   private supabase = inject(SupabaseService);
+  private platformId = inject(PLATFORM_ID);
   i18n = inject(I18nService);
 
   profile = signal<ProfileInfo | null>(null);
@@ -687,7 +763,9 @@ export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     const profileData = await this.supabase.getProfile();
     this.profile.set(profileData);
-    this.loadHCaptchaScript();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadHCaptchaScript();
+    }
   }
 
   ngAfterViewInit(): void {

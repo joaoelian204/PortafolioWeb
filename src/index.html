@@ -13,6 +13,11 @@
   <meta name="robots" content="index, follow">
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.svg">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JM Portfolio">
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json">
   {
@@ -81,11 +86,22 @@
   <script>
     // Aplicar tema inmediatamente antes de que Angular se cargue
     (function() {
-      const saved = localStorage.getItem('portfolio-theme');
-      const theme = saved === 'light' ? 'light' : 
-                   (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
+      var validThemes = ['dark', 'light', 'monokai', 'github-dark', 'dracula', 'nord', 'solarized-dark'];
+      var darkThemes = ['dark', 'monokai', 'github-dark', 'dracula', 'nord', 'solarized-dark'];
+      var saved = localStorage.getItem('portfolio-theme');
+      var theme = (saved && validThemes.indexOf(saved) !== -1) ? saved : 'dark';
+      var themeType = darkThemes.indexOf(theme) !== -1 ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', theme);
-      document.documentElement.classList.add(theme + '-theme');
+      document.documentElement.classList.add(themeType + '-theme');
+
+      // Actualizar theme-color meta tag según el tema
+      var themeColors = {
+        'dark': '#1e1e1e', 'light': '#ffffff', 'monokai': '#272822',
+        'github-dark': '#0d1117', 'dracula': '#282a36', 'nord': '#2e3440',
+        'solarized-dark': '#002b36'
+      };
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', themeColors[theme] || '#1e1e1e');
     })();
   </script>
   <style>
@@ -132,6 +148,16 @@
   </style>
 </head>
 <body>
+  <script>
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (err) {
+          console.log('SW registration failed: ', err);
+        });
+      });
+    }
+  </script>
   <app-root>
     <div class="app-loading">
       <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">

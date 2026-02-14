@@ -1,4 +1,5 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { I18nService } from '../../core/services/i18n.service';
@@ -120,11 +121,11 @@ import { TerminalService } from '../../shared/terminal/terminal.service';
       }
 
       .status-item.errors svg {
-        color: #f48771;
+        color: var(--syntax-error, #f48771);
       }
 
       .status-item.warnings svg {
-        color: #cca700;
+        color: var(--syntax-warning, #cca700);
       }
 
       .status-item.authenticated {
@@ -150,6 +151,37 @@ import { TerminalService } from '../../shared/terminal/terminal.service';
       .file-type {
         text-transform: capitalize;
       }
+
+      @media (max-width: 768px) {
+        .status-bar {
+          font-size: 11px;
+          padding: 0 4px;
+        }
+
+        .status-item {
+          padding: 0 4px;
+          gap: 2px;
+        }
+
+        .status-item.sync,
+        .status-item.notification {
+          display: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .status-bar {
+          font-size: 10px;
+        }
+
+        .status-right .status-item:not(.file-type):not(.terminal-hint) {
+          display: none;
+        }
+
+        .status-item.terminal-hint .hint-text {
+          display: none;
+        }
+      }
     `,
   ],
 })
@@ -158,6 +190,7 @@ export class StatusBarComponent implements OnInit, OnDestroy {
   i18n = inject(I18nService);
   terminalService = inject(TerminalService);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   currentLine = 1;
   currentCol = 1;
@@ -188,7 +221,9 @@ export class StatusBarComponent implements OnInit, OnDestroy {
         this.currentCol = 1;
       });
 
-    setTimeout(() => this.attachScrollListener(), 300);
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => this.attachScrollListener(), 300);
+    }
   }
 
   ngOnDestroy() {
