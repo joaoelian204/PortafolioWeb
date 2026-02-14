@@ -38,11 +38,6 @@
 [functions]
   node_bundler = "esbuild"
 
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 # SEO: Serve robots.txt and sitemap.xml directly (before SPA catch-all)
 [[redirects]]
   from = "/robots.txt"
