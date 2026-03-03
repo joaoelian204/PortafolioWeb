@@ -231,6 +231,8 @@ import { I18nService } from '../../core/services/i18n.service';
         flex-direction: column;
         align-items: center;
         min-height: 78px;
+        overflow: visible;
+        width: 100%;
       }
 
       .loading-state,
@@ -331,10 +333,25 @@ import { I18nService } from '../../core/services/i18n.service';
         height: 16px;
       }
 
-      /* Estilos para el widget de hCaptcha en tema oscuro */
+      /* Estilos para el widget de hCaptcha */
       :host ::ng-deep .h-captcha {
         transform: scale(0.95);
         transform-origin: center;
+      }
+
+      /* Responsive: escalar captcha en pantallas pequeñas */
+      @media (max-width: 400px) {
+        :host ::ng-deep .h-captcha {
+          transform: scale(0.82);
+          transform-origin: center;
+        }
+      }
+
+      @media (max-width: 340px) {
+        :host ::ng-deep .h-captcha {
+          transform: scale(0.72);
+          transform-origin: center;
+        }
       }
     `,
   ],
