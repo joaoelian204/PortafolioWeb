@@ -599,17 +599,35 @@ export class AdminComponent implements OnInit {
     const type = this.selectedSocialType() || this.editingSocialLink()?.type;
     if (!type) return;
 
+    // Normalizar la URL: agregar https:// si no tiene protocolo
+    const normalizedUrl = this.normalizeUrl(url);
+
     const currentLinks = [...this.socialLinks()];
     const existingIndex = currentLinks.findIndex((l) => l.type === type);
 
     if (existingIndex >= 0) {
-      currentLinks[existingIndex] = { type, url };
+      currentLinks[existingIndex] = { type, url: normalizedUrl };
     } else {
-      currentLinks.push({ type, url });
+      currentLinks.push({ type, url: normalizedUrl });
     }
 
     this.socialLinks.set(currentLinks);
     this.closeSocialModal();
+  }
+
+  private normalizeUrl(url: string): string {
+    const trimmed = url.trim();
+    if (!trimmed) return trimmed;
+    // Si ya tiene un protocolo (http:// o https://), dejarlo como está
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+    // Si empieza con //, agregar https:
+    if (trimmed.startsWith('//')) {
+      return `https:${trimmed}`;
+    }
+    // Si no tiene protocolo, agregar https://
+    return `https://${trimmed}`;
   }
 
   removeSocialLink(type: string): void {
